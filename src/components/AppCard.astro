@@ -13,23 +13,29 @@ const rel = item.affiliate ? 'nofollow sponsored noopener' : 'noopener';
   <div class="body">
     <h3>{rank ? `${rank}. ` : ''}{item.url && !item.ours ? <a href={item.url} rel={rel} target="_blank" data-outbound data-app-name={item.name} data-affiliate={String(item.affiliate ?? false)}>{item.name}</a> : item.name}{item.ours && <span class="ours">{ui[lang].ours}</span>}</h3>
     <p class="tag">{item.tagline}</p>
-    <p class="meta">{item.price} · {item.platforms}{item.openSource ? ' · Open source' : ''}</p>
+    <p class="meta"><span class="price">{item.price}</span><span class="m">{item.platforms}{item.openSource ? ' · Open source' : ''}</span></p>
     <div class="pc">
       <ul class="pros">{item.pros.map((p) => <li>{p}</li>)}</ul>
       <ul class="cons">{item.cons.map((p) => <li>{p}</li>)}</ul>
     </div>
+    {item.url && !item.ours && <a class="visit link-arrow" href={item.url} rel={rel} target="_blank" data-outbound data-app-name={item.name} data-affiliate={String(item.affiliate ?? false)}>Visit</a>}
   </div>
 </article>
 <style>
-  .app { display: flex; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
-  .icon { flex: none; width: 48px; height: 48px; border-radius: 11px; background: var(--code-bg); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; color: var(--text-2); font-size: 1.2rem; }
-  h3 { margin: 0 0 0.15rem; font-size: 1.1rem; }
-  .ours { margin-left: 0.5rem; font-size: 0.7rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 99px; background: var(--accent); color: var(--on-accent); vertical-align: middle; }
-  .tag { margin: 0; }
-  .meta { margin: 0.2rem 0 0.6rem; font-size: 0.85rem; color: var(--text-2); }
-  .pc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 1.5rem; }
-  ul { margin: 0; padding: 0; list-style: none; font-size: 0.92rem; }
-  li { padding-left: 1.3rem; position: relative; margin-bottom: 0.25rem; }
-  .pros li::before { content: "+"; color: var(--success-text); position: absolute; left: 0.2rem; font-weight: 700; }
-  .cons li::before { content: "−"; color: var(--warn-text); position: absolute; left: 0.2rem; font-weight: 700; }
+  .app { display: flex; gap: 20px; padding: 28px; margin-bottom: 16px; background: var(--bg-alt); border-radius: var(--r-card); }
+  .icon { flex: none; width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(160deg, #5aa7ee, #0071e3); display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 24px; }
+  .body { min-width: 0; flex: 1; }
+  h3 { margin: 0 0 4px; font-size: 24px; }
+  .ours { margin-left: 10px; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 99px; background: var(--accent); color: #fff; vertical-align: 3px; }
+  .tag { margin: 0 0 8px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+  .price { background: var(--bg); border: 0.5px solid var(--line); border-radius: 99px; padding: 2px 12px; font-size: 14px; }
+  .meta .m { font-size: 14px; color: var(--text-2); padding: 2px 0; }
+  .pc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 28px; }
+  ul { margin: 0; padding: 0; list-style: none; font-size: 16px; }
+  li { padding-left: 26px; position: relative; margin-bottom: 8px; }
+  .pros li::before { content: "✓"; color: var(--success-text); position: absolute; left: 2px; font-weight: 700; }
+  .cons li::before { content: "✕"; color: var(--text-3); position: absolute; left: 2px; font-weight: 700; }
+  .visit { display: inline-block; margin-top: 8px; }
+  @media (max-width: 734px) { .app { padding: 20px; gap: 14px; } .icon { width: 44px; height: 44px; font-size: 20px; } }
 </style>

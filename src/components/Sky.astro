@@ -1,0 +1,20 @@
+---
+// Hero backdrop: a soft CSS sky (no photo). Swap in a licensed AVIF later by setting --sky-img (UI spec §10).
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class={`sky ${cls}`}><slot /></div>
+<style>
+  .sky { position: relative; overflow: clip; color: #1d1d1f;
+    background:
+      radial-gradient(60% 40% at 18% 22%, rgba(255,255,255,0.9), transparent 70%),
+      radial-gradient(50% 34% at 82% 14%, rgba(255,255,255,0.8), transparent 70%),
+      radial-gradient(70% 36% at 60% 62%, rgba(255,255,255,0.55), transparent 72%),
+      var(--sky-img, none),
+      linear-gradient(180deg, #5aa7ee 0%, #9ccbf5 45%, #d9ecfb 80%, #ffffff 100%); }
+  .sky::after { content: ""; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+  .sky > :global(*) { position: relative; z-index: 1; }
+  :global(:root[data-theme="dark"]) .sky, :global(:root:not([data-theme="light"])) .sky { }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .sky { color: #f5f5f7; background: radial-gradient(60% 40% at 20% 20%, rgba(70,110,200,0.5), transparent 70%), radial-gradient(50% 34% at 80% 12%, rgba(120,90,200,0.35), transparent 70%), linear-gradient(180deg, #0b1630 0%, #16254a 55%, #000 100%); } }
+  :global(:root[data-theme="dark"]) .sky { color: #f5f5f7; background: radial-gradient(60% 40% at 20% 20%, rgba(70,110,200,0.5), transparent 70%), radial-gradient(50% 34% at 80% 12%, rgba(120,90,200,0.35), transparent 70%), linear-gradient(180deg, #0b1630 0%, #16254a 55%, #000 100%); }
+</style>

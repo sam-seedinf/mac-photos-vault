@@ -15,8 +15,9 @@ export const prefix = (lang: Lang) => (lang === 'en' ? '' : `/${lang}`);
 
 export const ui = {
   en: {
-    nav: { guides: 'Guides', apps: 'Apps', best: 'Best', tools: 'Tools' },
+    nav: { guides: 'Guides', apps: 'Vault', best: 'Compare', tools: 'Tools' },
     download: 'Download for Mac',
+    downloadShort: 'Download',
     contents: 'Contents',
     quickAnswer: 'Quick answer',
     methods: 'Methods at a glance',
@@ -40,8 +41,9 @@ export const ui = {
     tagline: 'Practical guides and honest comparisons for keeping files and photos private on a Mac.',
   },
   ja: {
-    nav: { guides: 'ガイド', apps: 'アプリ', best: 'おすすめ', tools: 'ツール' },
+    nav: { guides: 'ガイド', apps: 'Vault', best: '比較', tools: 'ツール' },
     download: 'Mac 版をダウンロード',
+    downloadShort: 'ダウンロード',
     contents: '目次',
     quickAnswer: '結論',
     methods: '方法の比較',
@@ -65,8 +67,9 @@ export const ui = {
     tagline: 'Mac で写真やファイルを守るための、実用的なガイドと正直な比較。',
   },
   de: {
-    nav: { guides: 'Anleitungen', apps: 'Apps', best: 'Beste', tools: 'Tools' },
+    nav: { guides: 'Anleitungen', apps: 'Vault', best: 'Vergleich', tools: 'Tools' },
     download: 'Für Mac laden',
+    downloadShort: 'Laden',
     contents: 'Inhalt',
     quickAnswer: 'Kurz gesagt',
     methods: 'Methoden im Überblick',

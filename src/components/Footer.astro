@@ -1,0 +1,47 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+import { allPages, urlOf, langOf } from '../lib/content';
+import { GITHUB_URL } from '../lib/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const en = (await allPages()).filter((p) => langOf(p) === 'en');
+const guides = en.filter((p) => p.data.kind === 'guide').slice(0, 6);
+const best = en.filter((p) => p.data.kind !== 'guide').slice(0, 6);
+const heads = {
+  en: ['Vault', 'Guides', 'Best of / Compare', 'Tools', 'Company'],
+  ja: ['Vault', 'ガイド', 'おすすめ / 比較', 'ツール', '会社情報'],
+  de: ['Vault', 'Anleitungen', 'Beste / Vergleich', 'Tools', 'Unternehmen'],
+}[lang];
+---
+<footer class="footer">
+  <div class="container">
+    <div class="cols">
+      <div><h2>{heads[0]}</h2><ul>
+        <li><button type="button" class="linkbtn" data-fakedoor data-app="vault" data-lang={lang}>{t.downloadShort}</button></li>
+        <li><a href="/vault/#security">Security</a></li>
+        <li><a href="/vault/">Secure Vault for Mac</a></li>
+        {GITHUB_URL && <li><a href={GITHUB_URL} rel="noopener">GitHub</a></li>}
+      </ul></div>
+      <div><h2>{heads[1]}</h2><ul>
+        {guides.map((p) => <li><a href={urlOf(p)}>{p.data.h1 ?? p.data.title}</a></li>)}
+        <li><a href="/guides/">All guides ›</a></li>
+      </ul></div>
+      <div><h2>{heads[2]}</h2><ul>
+        {best.map((p) => <li><a href={urlOf(p)}>{p.data.h1 ?? p.data.title}</a></li>)}
+      </ul></div>
+      <div><h2>{heads[3]}</h2><ul><li><a href="/tools/hidden-file-checker/">Hidden File Checker</a></li></ul></div>
+      <div><h2>{heads[4]}</h2><ul>
+        <li><a href="/about/">About</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="/terms/">Terms</a></li><li><a href="/contact/">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="bottom">
+      <p>{t.unofficial} Mac and macOS are trademarks of Apple Inc., used descriptively. © {new Date().getFullYear()} Secure Mac App.</p>
+      <p class="langs-f"><a href="/">EN</a> · <a href="/ja/" lang="ja">日本語</a> · <a href="/de/" lang="de">Deutsch</a></p>
+    </div>
+  </div>
+</footer>
+<style>
+  .linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--text-2); cursor: pointer; letter-spacing: inherit; }
+  .linkbtn:hover { color: var(--accent-text); }
+</style>

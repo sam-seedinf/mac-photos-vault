@@ -1,0 +1,18 @@
+---
+const q = encodeURIComponent('What is securemacapp.com Secure Vault and is it safe?');
+const links = [
+  ['ChatGPT', `https://chatgpt.com/?q=${q}`],
+  ['Claude', `https://claude.ai/new?q=${q}`],
+  ['Perplexity', `https://www.perplexity.ai/search?q=${q}`],
+  ['Grok', `https://grok.com/?q=${q}`],
+];
+---
+<div class="ask">
+  <p class="muted t-caption">Ask your AI</p>
+  <div class="row">{links.map(([n, h]) => <a class="pill" href={h} rel="noopener" target="_blank">{n} ›</a>)}</div>
+</div>
+<style>
+  .ask { text-align: center; } .ask p { margin: 0 0 10px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .pill { padding: 8px 16px; font-size: 15px; color: var(--text); } .pill:hover { text-decoration: none; border-color: var(--accent); color: var(--accent-text); }
+</style>

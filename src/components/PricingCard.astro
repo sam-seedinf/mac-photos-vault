@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import FakeDoorButton from './FakeDoorButton.astro';
+const free = ['Encrypt photos and files', 'Touch ID unlock', 'Auto-lock', 'Up to 500 items (planned)'];
+const pro = ['Unlimited items', 'Recovery phrase', 'Menu bar quick add', 'Screenshot-proof window', 'Spotlight-proof storage', 'All future updates'];
+---
+<div class="price">
+  <div class="pc free reveal">
+    <h3>Free</h3>
+    <p class="amt"><span class="t-stat">$0</span></p>
+    <p class="muted">For trying it out</p>
+    <ul>{free.map((f) => <li><Icon name="check" size={18} /> {f}</li>)}</ul>
+    <FakeDoorButton class="secondary" label="Join the beta" />
+  </div>
+  <div class="pc pro reveal">
+    <span class="pill accent">Lifetime</span>
+    <h3>Pro</h3>
+    <p class="amt"><span class="t-stat">$29</span></p>
+    <p class="muted">one-time · no subscription</p>
+    <ul>{pro.map((f) => <li><Icon name="check" size={18} /> {f}</li>)}</ul>
+    <FakeDoorButton label="Join the beta" />
+  </div>
+</div>
+<p class="muted small note">Planned pricing, not final. The beta is free; we'll confirm tiers before launch.</p>
+<style>
+  .price { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 820px; margin: 0 auto; }
+  .pc { background: var(--bg); border-radius: var(--r-card); padding: 36px; position: relative; display: flex; flex-direction: column; }
+  .pro { border: 2px solid var(--accent); }
+  .pro .pill { position: absolute; top: 20px; right: 20px; }
+  .pc h3 { margin: 0; } .amt { margin: 14px 0 0; } .pc .muted { margin: 4px 0 20px; font-size: 15px; }
+  ul { list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 12px; flex: 1; }
+  li { display: flex; gap: 10px; font-size: 16px; } li :global(svg) { color: var(--success-text); flex: none; margin-top: 2px; }
+  .note { text-align: center; margin-top: 20px; }
+  @media (max-width: 734px) { .price { grid-template-columns: 1fr; } .pc { padding: 28px; } }
+</style>

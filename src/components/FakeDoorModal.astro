@@ -1,0 +1,45 @@
+---
+import SubscribeForm from './SubscribeForm.astro';
+import Icon from './Icon.astro';
+import type { Lang } from '../lib/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const m = {
+  en: ['Beta opens soon', "Get the download link by email. No spam, one email when it's ready.", "You're on the list.", "We'll email you the download link.", 'Close'],
+  ja: ['ベータ公開までもうすぐ', 'ダウンロードリンクをメールでお送りします。スパムなし、準備ができたら 1 通だけ。', '登録しました。', 'ダウンロードリンクをメールでお送りします。', '閉じる'],
+  de: ['Beta startet bald', 'Den Download-Link erhalten Sie per E-Mail. Kein Spam, nur eine E-Mail, sobald es losgeht.', 'Sie stehen auf der Liste.', 'Wir senden Ihnen den Download-Link per E-Mail.', 'Schließen'],
+}[lang];
+---
+<dialog id="fd-modal" aria-labelledby="fd-title">
+  <form method="dialog" class="x"><button aria-label={m[4]}><Icon name="close" size={20} /></button></form>
+  <div class="fd-form">
+    <img src="/favicon.svg" alt="" width="64" height="64" class="appicon" />
+    <h3 id="fd-title">{m[0]}</h3>
+    <p class="muted">{m[1]}</p>
+    <SubscribeForm lang={lang} source="modal" app="vault" />
+  </div>
+  <div class="fd-done" hidden>
+    <svg class="tick" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="none" stroke="var(--success)" stroke-width="3" /><path d="m19 33 9 9 17-19" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    <h3>{m[2]}</h3>
+    <p class="muted">{m[3]}</p>
+    <p><a href="#" data-close-modal>{m[4]}</a></p>
+  </div>
+</dialog>
+<style is:global>
+  dialog#fd-modal { border: 0.5px solid var(--line); border-radius: var(--r-card); background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); color: var(--text); box-shadow: var(--shadow-window); width: min(440px, calc(100% - 32px)); padding: 36px 32px 28px; text-align: center; overflow: visible; }
+  dialog#fd-modal::backdrop { background: rgba(0, 0, 0, 0.4); }
+  dialog#fd-modal[open] { animation: sheet 300ms var(--ease); }
+  dialog#fd-modal h3 { margin: 12px 0 6px; font-size: 24px; }
+  dialog#fd-modal .appicon { border-radius: 14px; box-shadow: var(--shadow-card); }
+  dialog#fd-modal .x { position: absolute; top: 10px; right: 10px; margin: 0; }
+  dialog#fd-modal .x button { background: var(--code-bg); border: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--text-2); }
+  dialog#fd-modal .fd-done[hidden], dialog#fd-modal .fd-form[hidden] { display: none; }
+  dialog#fd-modal .tick circle { stroke-dasharray: 190; stroke-dashoffset: 190; animation: draw 500ms var(--ease) forwards; }
+  dialog#fd-modal .tick path { stroke-dasharray: 50; stroke-dashoffset: 50; animation: draw 400ms 250ms var(--ease) forwards; }
+  dialog#fd-modal form.sub .row { flex-direction: column; }
+  @keyframes sheet { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  #consent { position: fixed; z-index: 150; left: 16px; right: 16px; bottom: 16px; max-width: 560px; margin-inline: auto; background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 0.5px solid var(--line); border-radius: var(--r-card); box-shadow: var(--shadow-window); padding: 16px 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 14px; }
+  #consent[hidden] { display: none; }
+  #consent p { margin: 0; flex: 1 1 240px; }
+</style>

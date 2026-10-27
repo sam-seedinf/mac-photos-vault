@@ -1,0 +1,34 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+import LangSwitch from './LangSwitch.astro';
+import FakeDoorButton from './FakeDoorButton.astro';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; path: string; targets: Partial<Record<Lang, string>>; links: { guides: string; best: string } }
+const { lang, path, targets, links } = Astro.props;
+const t = ui[lang];
+const items = [
+  [t.nav.apps, '/vault/', path === '/vault/'],
+  [t.nav.guides, links.guides, path.includes('/guides')],
+  [t.nav.best, links.best, path.includes('/best') || path.includes('/compare') || path.includes('/alternatives')],
+  [t.nav.tools, '/tools/hidden-file-checker/', path.startsWith('/tools')],
+] as const;
+---
+<header class="nav">
+  <div class="container">
+    <a class="brand" href={lang === 'en' ? '/' : `/${lang}/`}><img src="/favicon.svg" alt="" width="22" height="22" />securemacapp</a>
+    <nav class="links" aria-label="Main">
+      {items.map(([label, href, on]) => <a href={href} aria-current={on ? 'true' : undefined}>{label}</a>)}
+    </nav>
+    <div class="actions">
+      <LangSwitch current={lang} targets={targets} />
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle light / dark theme"><Icon name="moon" size={18} /></button>
+      <FakeDoorButton lang={lang} size="sm" label={t.downloadShort} />
+      <button class="burger" type="button" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="sheet"><Icon name="menu" size={22} /></button>
+    </div>
+  </div>
+</header>
+<div class="sheet" id="sheet" hidden>
+  {items.map(([label, href]) => <a href={href}>{label}</a>)}
+  <LangSwitch current={lang} targets={targets} />
+  <p style="margin-top:24px"><FakeDoorButton lang={lang} /></p>
+</div>

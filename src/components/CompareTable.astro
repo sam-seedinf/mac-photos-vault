@@ -2,21 +2,30 @@
 import { inline } from '../lib/inline';
 interface Props { head: string[]; rows: string[][]; caption?: string }
 const { head, rows, caption } = Astro.props;
-const mark = (c: string) => (c === '✓' ? ['Yes', '✓'] : c === '✗' ? ['No', '✗'] : null);
+const mark = (c: string) => (c === '✓' ? ['Yes', '✓', 'yes'] : c === '✗' ? ['No', '✗', 'no'] : null);
+const ourCol = head.findIndex((h, i) => i > 0 && /secure vault|vault app/i.test(h));
+const isOurs = (r: string[]) => /\((ours|自社製|von uns)\)/i.test(r[0]);
 ---
 <div class="table-scroll" tabindex="0" role="region" aria-label={caption ?? 'Comparison table'}>
   <table>
     {caption && <caption class="sr-only">{caption}</caption>}
-    <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+    <thead><tr>{head.map((h, i) => <th scope="col" class:list={[{ ours: i === ourCol }]}>{h}{i === ourCol && <span class="badge">Ours</span>}</th>)}</tr></thead>
     <tbody>
       {rows.map((r) => (
-        <tr>
+        <tr class:list={[{ oursrow: isOurs(r) }]}>
           {r.map((c, i) => {
             const m = mark(c);
-            return i === 0 ? <th scope="row" set:html={inline(c)} /> : m ? <td><span aria-label={m[0]} role="img">{m[1]}</span></td> : <td set:html={inline(c)} />;
+            return i === 0 ? <th scope="row" set:html={inline(c)} /> : m ? <td class:list={[{ ours: i === ourCol }]}><span class={`mk ${m[2]}`} aria-label={m[0]} role="img">{m[1]}</span></td> : <td class:list={[{ ours: i === ourCol }]} set:html={inline(c)} />;
           })}
         </tr>
       ))}
     </tbody>
   </table>
 </div>
+<style>
+  .mk.yes { color: var(--success-text); font-weight: 700; } .mk.no { color: var(--text-3); }
+  th.ours, td.ours { background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
+  thead th.ours { background: color-mix(in srgb, var(--accent) 6%, var(--bg-alt)); }
+  tr.oursrow > * { background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
+  .badge { margin-left: 8px; font-size: 11px; background: var(--accent); color: #fff; padding: 1px 8px; border-radius: 99px; font-weight: 600; vertical-align: 1px; }
+</style>

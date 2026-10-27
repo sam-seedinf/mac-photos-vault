@@ -8,27 +8,28 @@ const dev = import.meta.env.DEV;
 ---
 <ol class="steps">
   {steps.map((s) => (
-    <li>
-      <h3>{s.title}</h3>
-      <p set:html={inline(s.body)} />
-      {s.keys && <p class="keys"><Kbd keys={s.keys} /></p>}
-      {s.shot ? (
-        <MacWindow title={s.title}><img src={s.shot.src} alt={s.shot.alt} loading="lazy" width="960" height="600" /></MacWindow>
-      ) : dev ? (
-        <p class="shot-todo">Screenshot slot: capture on a current macOS version, then set <code>shot</code> in frontmatter.</p>
-      ) : null}
+    <li class="card reveal">
+      <span class="n" aria-hidden="true"></span>
+      <div>
+        <h3>{s.title}</h3>
+        <p set:html={inline(s.body)} />
+        {s.keys && <p class="keys"><Kbd keys={s.keys} /></p>}
+        {s.shot ? (
+          <MacWindow title={s.title}><img src={s.shot.src} alt={s.shot.alt} loading="lazy" width="960" height="600" /></MacWindow>
+        ) : dev ? (
+          <p class="todo">Screenshot slot: capture on a current macOS version, then set <code>shot</code> in frontmatter.</p>
+        ) : null}
+      </div>
     </li>
   ))}
 </ol>
 <style>
-  .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 0 1.5em; display: grid; gap: 1.4rem; }
-  .steps li { counter-increment: step; position: relative; padding-left: 2.6rem; }
-  .steps li::before {
-    content: counter(step); position: absolute; left: 0; top: 0.1rem; width: 1.9rem; height: 1.9rem; border-radius: 50%;
-    background: var(--accent); color: var(--on-accent); font-weight: 650; font-size: 0.9rem; display: grid; place-items: center;
-  }
-  .steps h3 { margin: 0 0 0.3rem; font-size: 1.05rem; }
-  .keys { margin: 0.2rem 0 0.6rem; }
-  .shot-todo { font-size: 0.82rem; color: var(--text-2); border: 1px dashed var(--line); padding: 0.6rem; border-radius: var(--radius-control); }
-  img { display: block; width: 100%; }
+  .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 0 1.5em; display: grid; gap: 16px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 24px 28px; }
+  .n::before { content: counter(step); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-tint); color: var(--accent-text); font: 600 20px/1 var(--font-rounded); }
+  .steps h3 { margin: 0 0 6px; font-size: 21px; }
+  .steps p { margin: 0 0 0.6em; color: var(--text); font-size: 17px; }
+  .keys { margin: 0.4em 0 0 !important; }
+  .todo { font-size: 13px !important; color: var(--text-3) !important; border: 1px dashed var(--line); padding: 8px 12px; border-radius: var(--r-thumb); }
+  @media (max-width: 734px) { .steps li { grid-template-columns: 32px 1fr; padding: 20px; gap: 12px; } .n::before { width: 32px; height: 32px; font-size: 16px; } }
 </style>

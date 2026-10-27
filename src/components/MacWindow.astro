@@ -1,12 +1,8 @@
 ---
-interface Props { title?: string; class?: string }
-const { title = '', class: cls = '' } = Astro.props;
+interface Props { title?: string; class?: string; label?: string }
+const { title = '', class: cls = '', label } = Astro.props;
 ---
-<div class={`window ${cls}`}>
-  <div class="titlebar">
-    <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="t">{title}</div>
-    <div></div>
-  </div>
-  <slot />
-</div>
+<figure class={`mac-window ${cls}`} role={label ? 'img' : undefined} aria-label={label}>
+  <div class="titlebar" aria-hidden="true"><span class="tl red"></span><span class="tl yellow"></span><span class="tl green"></span><span class="title">{title}</span></div>
+  <div aria-hidden={label ? 'true' : undefined}><slot /></div>
+</figure>

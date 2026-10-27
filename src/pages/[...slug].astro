@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import MacWindow from '../components/MacWindow.astro';
+import Mock from '../components/Mock.astro';
+import AskAI from '../components/AskAI.astro';
 import Steps from '../components/Steps.astro';
 import Kbd from '../components/Kbd.astro';
 import Callout from '../components/Callout.astro';
@@ -29,6 +30,7 @@ const d = entry.data;
 const lang = langOf(entry);
 const t = ui[lang];
 const { Content, headings } = await render(entry);
+const minutes = Math.max(2, Math.round((entry.body ?? '').split(/\s+/).length / 220 + (d.steps?.length ?? 0) * 0.4 + (d.items?.length ?? 0) * 0.5));
 const url = urlOf(entry);
 
 const parent = d.kind === 'guide' ? { name: t.nav.guides, url: lang === 'en' ? '/guides/' : homeUrl(lang) }
@@ -45,7 +47,7 @@ const showVaultCta = d.kind !== 'best';
 
 const toc: { id: string; label: string }[] = [{ id: 'answer', label: t.quickAnswer }];
 if (d.methods) toc.push({ id: 'methods', label: t.methods });
-const bodyFirst = d.kind === 'best';
+const bodyFirst = false;
 const bodyToc = headings.filter((h) => h.depth === 2).map((h) => ({ id: h.slug, label: h.text }));
 if (bodyFirst) toc.push(...bodyToc);
 if (d.items) toc.push({ id: 'list', label: lang === 'en' ? 'The list' : lang === 'ja' ? '一覧' : 'Die Liste' });
@@ -55,6 +57,9 @@ if (showVaultCta) toc.push({ id: 'vault', label: t.vaultHeading });
 if (d.faq.length) toc.push({ id: 'faq', label: t.faq });
 if (related.length || bestPage) toc.push({ id: 'related', label: t.related });
 
+const wide = d.kind !== 'guide';
+const listLabel = lang === 'en' ? 'The list' : lang === 'ja' ? '一覧' : 'Die Liste';
+const itemHead = lang === 'ja' ? ['アプリ', '価格', '対応', 'オープンソース', '向いている人'] : lang === 'de' ? ['App', 'Preis', 'Plattform', 'Open Source', 'Geeignet für'] : ['App', 'Price', 'Platforms', 'Open source', 'Best for'];
 const alternates = isReviewed(entry) ? alternatesFor(entry, all) : {};
 const itemRows = d.items?.map((i) => [
   i.ours ? `**${i.name}** (${t.ours})` : i.name,
@@ -77,126 +82,134 @@ const ogPath = ogFor(entry);
   type="article"
   jsonLd={pageSchemas(entry, crumbs, lang)}
 >
-  <div class="wrap">
+  <div class="container top">
     <Breadcrumbs crumbs={crumbs} />
-    <MacWindow title={d.title}>
-      <div class="layout">
-        <aside class="toc" aria-label={t.contents}>
-          <details class="toc-m"><summary>{t.contents}</summary>
-            <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
-          </details>
-          <nav class="toc-d" aria-label={t.contents}>
-            <p class="eyebrow">{t.contents}</p>
-            <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
-          </nav>
-        </aside>
-        <article class="article" data-pagefind-body>
-          <h1>{d.h1 ?? d.title}</h1>
-          <LastUpdated date={d.updated} lang={lang} testedOn={d.testedOn} />
+    <div class={`layout ${wide ? 'wide' : ''}`}>
+      <article class="article" data-pagefind-body>
+        <h1>{d.h1 ?? d.title}</h1>
+        <LastUpdated date={d.updated} lang={lang} testedOn={d.testedOn} minutes={minutes} />
 
-          <section id="answer" class="answer" aria-label={t.quickAnswer}>
-            <p set:html={inline(d.answer)} />
+        <section id="answer" class="answer" aria-label={t.quickAnswer}>
+          <p class="lbl">{t.quickAnswer}</p>
+          <p set:html={inline(d.answer)} />
+        </section>
+
+        {d.methods && (
+          <section id="methods">
+            <h2>{t.methods}</h2>
+            <CompareTable head={d.methods.head} rows={d.methods.rows} caption={t.methods} />
           </section>
+        )}
 
-          {d.methods && (
-            <section id="methods">
-              <h2>{t.methods}</h2>
-              <CompareTable head={d.methods.head} rows={d.methods.rows} caption={t.methods} />
-            </section>
-          )}
+        {d.items && (
+          <section id="list">
+            <h2>{listLabel}</h2>
+            <CompareTable head={itemHead} rows={itemRows!} caption="App comparison" />
+            <p class="muted small">
+              {d.lastChecked ? `Prices and features last checked ${fmtDate(d.lastChecked, lang)}.` : 'Prices change often; confirm on each vendor’s site before buying.'}
+              {lang === 'en' ? ' Our own app is labelled.' : ''}
+            </p>
+            {d.items.map((it, i) => <AppCard item={it} lang={lang} rank={i + 1} />)}
+          </section>
+        )}
 
-          {bodyFirst && <div class="body"><Content components={{ Callout, Kbd, CompareTable }} /></div>}
+        {d.steps && (
+          <section id="steps">
+            <h2>{t.steps}</h2>
+            <Steps steps={d.steps} />
+          </section>
+        )}
 
-          {d.items && (
-            <section id="list">
-              <h2>{lang === 'en' ? 'The list' : lang === 'ja' ? '一覧' : 'Die Liste'}</h2>
-              <CompareTable
-                head={lang === 'ja' ? ['アプリ', '価格', '対応', 'オープンソース', '向いている人'] : lang === 'de' ? ['App', 'Preis', 'Plattform', 'Open Source', 'Geeignet für'] : ['App', 'Price', 'Platforms', 'Open source', 'Best for']}
-                rows={itemRows!}
-                caption="App comparison"
-              />
-              <p class="muted small">
-                {d.lastChecked
-                  ? `Prices and features last checked ${fmtDate(d.lastChecked, lang)}.`
-                  : 'Prices change often; confirm on each vendor’s site before buying.'}
-                {' '}{lang === 'en' ? 'Our own app is labelled.' : ''}
-              </p>
-              {d.items.map((it, i) => <AppCard item={it} lang={lang} rank={i + 1} />)}
-            </section>
-          )}
+        {d.kind === 'guide' && d.steps && (
+          <aside class="oneDrag">
+            <div class="mk"><Mock kind="drag" /></div>
+            <div>
+              <p class="eyebrow">{lang === 'en' ? 'The one-drag way' : lang === 'ja' ? 'ドラッグ 1 回で' : 'Mit einem Zug'}</p>
+              <h3>{lang === 'en' ? 'Skip the mounting and ejecting.' : lang === 'ja' ? 'マウントも取り出しも不要。' : 'Kein Einbinden, kein Auswerfen.'}</h3>
+              <p class="muted">{lang === 'en' ? 'Secure Vault (in beta) is planned to encrypt files as you drop them in.' : lang === 'ja' ? 'Secure Vault（ベータ）は、ドロップしたファイルを自動で暗号化する予定です。' : 'Secure Vault (Beta) soll Dateien beim Ablegen automatisch verschlüsseln.'}</p>
+              <FakeDoorButton lang={lang} />
+            </div>
+          </aside>
+        )}
 
-          {d.steps && (
-            <section id="steps">
-              <h2>{t.steps}</h2>
-              <Steps steps={d.steps} />
-            </section>
-          )}
+        {!bodyFirst && <div class="body"><Content components={{ Callout, Kbd, CompareTable }} /></div>}
 
-          {!bodyFirst && <div class="body"><Content components={{ Callout, Kbd, CompareTable }} /></div>}
+        {showVaultCta && (
+          <section id="vault" class="vault-cta">
+            <h2>{d.kind === 'guide' ? t.vaultHeading : lang === 'en' ? 'Bottom line' : lang === 'ja' ? 'まとめ' : 'Fazit'}</h2>
+            <p>{t.vaultBody}</p>
+            <p class="btn-row"><FakeDoorButton lang={lang} /> <a class="link-arrow" href="/vault/">{t.vaultCta}</a></p>
+          </section>
+        )}
 
-          {showVaultCta && (
-            <section id="vault" class="vault-cta">
-              <h2>{t.vaultHeading}</h2>
-              <p>{t.vaultBody}</p>
-              <p class="actions"><a class="btn secondary" href="/vault/">{t.vaultCta}</a> <FakeDoorButton lang={lang} /></p>
-            </section>
-          )}
+        <FAQ faq={d.faq} lang={lang} />
 
-          <FAQ faq={d.faq} lang={lang} />
+        {(related.length > 0 || bestPage) && (
+          <section id="related">
+            <h2>{t.related}</h2>
+            <div class="grid">
+              {bestPage && <a class="card" href={urlOf(bestPage)}><h3>{bestPage.data.h1 ?? bestPage.data.title}</h3><p>{bestPage.data.description}</p></a>}
+              {related.map((r) => <a class="card" href={urlOf(r)}><h3>{r.data.h1 ?? r.data.title}</h3><p>{r.data.description}</p></a>)}
+            </div>
+          </section>
+        )}
 
-          {(related.length > 0 || bestPage) && (
-            <section id="related">
-              <h2>{t.related}</h2>
-              <div class="grid">
-                {bestPage && <a class="card" href={urlOf(bestPage)}><h3>{bestPage.data.h1 ?? bestPage.data.title}</h3><p>{bestPage.data.description}</p></a>}
-                {related.map((r) => <a class="card" href={urlOf(r)}><h3>{r.data.h1 ?? r.data.title}</h3><p>{r.data.description}</p></a>)}
-              </div>
-            </section>
-          )}
+        {d.external.length > 0 && (
+          <section class="sources">
+            <h2>{lang === 'en' ? 'Sources' : lang === 'ja' ? '参考' : 'Quellen'}</h2>
+            <ul>{d.external.map((e) => <li><a href={e.url} rel="noopener" target="_blank">{e.label}</a></li>)}</ul>
+          </section>
+        )}
 
-          {d.external.length > 0 && (
-            <section class="sources">
-              <h2>{lang === 'en' ? 'Sources' : lang === 'ja' ? '参考' : 'Quellen'}</h2>
-              <ul>{d.external.map((e) => <li><a href={e.url} rel="noopener" target="_blank">{e.label}</a></li>)}</ul>
-            </section>
-          )}
+        <p class="byline muted small">
+          {lang === 'en' ? 'Written by' : lang === 'ja' ? '執筆' : 'Von'} <a href="/about/">Sumeet</a> · <a href="/about/#how-we-test">{lang === 'en' ? 'How we test' : lang === 'ja' ? 'テスト方法' : 'So testen wir'}</a>
+        </p>
+      </article>
 
-          {d.kind === 'best' && <EmailCapture lang={lang} source={pathOf(entry)} />}
-
-          <p class="byline muted small">
-            {lang === 'en' ? 'Written by' : lang === 'ja' ? '執筆' : 'Von'} <a href="/about/">Sumeet</a> · <a href="/about/#how-we-test">{lang === 'en' ? 'How we test' : lang === 'ja' ? 'テスト方法' : 'So testen wir'}</a>
-          </p>
-        </article>
-      </div>
-    </MacWindow>
+      <aside class="toc" aria-label={t.contents}>
+        <details class="toc-m"><summary>{t.contents}</summary>
+          <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
+        </details>
+        <nav class="toc-d" aria-label={t.contents}>
+          <p class="cap">{t.contents}</p>
+          <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
+        </nav>
+      </aside>
+    </div>
   </div>
+  <section class="section alt tight after"><div class="container"><AskAI /></div></section>
 </Base>
 <style>
-  .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); }
-  .toc { background: var(--sidebar); border-right: 1px solid var(--line); padding: 1.2rem 1rem; }
-  .toc-d { position: sticky; top: 76px; }
-  .toc ul { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
-  .toc li { margin-bottom: 0.15rem; }
-  .toc a { display: block; padding: 0.3rem 0.5rem; border-radius: 6px; color: var(--text); text-decoration: none; }
-  .toc a:hover { background: var(--code-bg); color: var(--link); }
+  .top { padding-top: 40px; }
+  .layout { display: grid; grid-template-columns: minmax(0, var(--max-text)) 220px; gap: 64px; justify-content: center; align-items: start; }
+  .layout.wide { grid-template-columns: minmax(0, 860px) 200px; gap: 48px; }
+  .layout > .toc { order: 2; }
+  .article { min-width: 0; }
+  .article :global(section[id]), .body :global(h2) { scroll-margin-top: 72px; }
+  .article h1 { margin-bottom: 8px; }
+  .article h2 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; margin: 1.6em 0 0.5em; font-weight: 600; }
+  .answer { background: var(--bg-alt); border-radius: var(--r-card); padding: 24px 28px; margin: 0 0 8px; }
+  .answer .lbl { font-size: 13px; font-weight: 600; color: var(--accent-text); margin: 0 0 6px; }
+  .answer p:last-child { margin: 0; font-size: 19px; line-height: 1.4; }
+  .toc-d { position: sticky; top: 76px; font-size: 14px; }
+  .toc ul { list-style: none; margin: 0; padding: 0; border-left: 0.5px solid var(--line); }
+  .toc li a { display: block; padding: 5px 0 5px 14px; color: var(--text-2); margin-left: -0.5px; border-left: 2px solid transparent; }
+  .toc li a:hover { color: var(--accent-text); text-decoration: none; border-left-color: var(--accent); }
+  .toc .cap { font-size: 12px; font-weight: 600; margin: 0 0 8px; color: var(--text); }
   .toc-m { display: none; }
-  .article { padding: 1.8rem clamp(1rem, 4vw, 2.6rem) 2rem; min-width: 0; }
-  .article > :global(*), .body { max-width: 74ch; }
-  .article :global(section[id]) { scroll-margin-top: 76px; }
-  .answer { font-size: 1.12rem; background: var(--code-bg); border-radius: var(--radius-window); padding: 1rem 1.2rem; margin: 0 0 1.5rem; border-left: 4px solid var(--accent); }
-  .answer p { margin: 0; }
-  .small { font-size: 0.85rem; }
-  .vault-cta { margin-top: 2.5rem; padding: 1.3rem 1.5rem; border-radius: var(--radius-window); border: 1px solid var(--line); background: var(--sidebar); }
-  .vault-cta h2 { margin-top: 0; font-size: 1.25rem; }
-  .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0; }
-  .byline { margin-top: 2.5rem; }
-  .body :global(h2) { scroll-margin-top: 76px; }
-  .article :global(.table-scroll) { max-width: none; }
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; }
-    .toc { border-right: 0; border-bottom: 1px solid var(--line); padding: 0.6rem 1rem; }
-    .toc-d { display: none; }
-    .toc-m { display: block; }
-    .toc-m summary { cursor: pointer; font-weight: 600; padding: 0.3rem 0; }
+  .small { font-size: 14px; }
+  .oneDrag { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: center; background: var(--bg-alt); border-radius: var(--r-card); padding: 28px; margin: 32px 0; }
+  .oneDrag h3 { margin: 0 0 6px; font-size: 24px; } .oneDrag p { margin-bottom: 16px; font-size: 16px; } .oneDrag .eyebrow { margin: 0 0 6px; font-size: 14px; }
+  .oneDrag :global(.app) { min-height: 150px; } .oneDrag :global(.zone) { padding: 18px 20px; }
+  .vault-cta { margin-top: 56px; padding: 32px; border-radius: var(--r-card); background: var(--bg-alt); }
+  .vault-cta h2 { margin-top: 0; font-size: 28px; } .vault-cta p { max-width: 52ch; }
+  .byline { margin-top: 48px; }
+  .after { margin-top: 64px; }
+  @media (max-width: 1068px) {
+    .layout, .layout.wide { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .layout > .toc { order: -1; margin: 0 0 20px; border-bottom: 0.5px solid var(--line); }
+    .toc-d { display: none; } .toc-m { display: block; }
+    .toc-m summary { cursor: pointer; font-weight: 600; padding: 10px 0; font-size: 15px; } .toc-m ul { padding-bottom: 12px; }
   }
+  @media (max-width: 734px) { .oneDrag { grid-template-columns: 1fr; padding: 20px; } .answer { padding: 20px; } .answer p:last-child { font-size: 17px; } }
 </style>

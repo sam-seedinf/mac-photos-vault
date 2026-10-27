@@ -1,0 +1,117 @@
+---
+import MacWindow from './MacWindow.astro';
+import Icon from './Icon.astro';
+// HTML/CSS mockups of the planned UI (UI spec §4 / §10). Decorative: described via `label`, contents are aria-hidden.
+interface Props { kind: 'vault' | 'finder' | 'terminal' | 'lockscreen' | 'touchid' | 'import' | 'menubar' | 'drag' | 'lockdemo'; class?: string; label?: string }
+const { kind, class: cls = '', label } = Astro.props;
+const labels: Record<string, string> = {
+  vault: 'Secure Vault window showing a grid of encrypted photo thumbnails with a sidebar of folders.',
+  finder: 'Finder window where the Taxes folder is dimmed because hidden items are showing.',
+  terminal: 'Terminal window running chflags hidden on a folder.',
+  lockscreen: 'Lock screen asking for Touch ID to unlock Secure Vault.',
+  touchid: 'Touch ID prompt on a Mac asking to unlock Secure Vault.',
+  import: 'Secure Vault encrypting 128 items with a progress bar.',
+  menubar: 'Mac menu bar with a Secure Vault menu offering Add to Vault and Lock Now.',
+  drag: 'Files being dragged into the Secure Vault window.',
+  lockdemo: 'Secure Vault photo grid blurring as the vault locks, then unlocking.',
+};
+const tiles = Array.from({ length: 12 }, (_, i) => (i * 53 + 205) % 360);
+const titles: Record<string, string> = { vault: 'Secure Vault', finder: 'Private', terminal: 'Terminal — zsh', lockscreen: '', touchid: '', import: 'Secure Vault', menubar: '', drag: 'Secure Vault', lockdemo: 'Secure Vault' };
+---
+{kind === 'lockscreen' || kind === 'touchid' ? (
+  <figure class={`ls ${kind} ${cls}`} role="img" aria-label={label ?? labels[kind]}>
+    <div class="ls-in" aria-hidden="true">
+      {kind === 'lockscreen' && <div class="clock">9:41</div>}
+      <div class="who"><Icon name="lock" size={28} /></div>
+      <div class="prompt"><Icon name="fingerprint" size={30} /><div><strong>Secure Vault</strong><span>Touch ID to unlock your vault</span></div></div>
+      <div class="pw">Enter Password</div>
+    </div>
+  </figure>
+) : kind === 'menubar' ? (
+  <figure class={`mb ${cls}`} role="img" aria-label={label ?? labels[kind]}>
+    <div class="bar" aria-hidden="true"><span class="app">Finder</span><span>File</span><span>Edit</span><span class="grow"></span><span class="on"><Icon name="lock" size={14} /></span><span>Tue 9:41</span></div>
+    <div class="menu" aria-hidden="true"><p>Add to Vault…</p><p>Open Secure Vault</p><hr /><p>Lock Now <kbd>⌘L</kbd></p><p class="dim">Auto-lock: 5 min</p></div>
+  </figure>
+) : (
+  <MacWindow title={titles[kind]} class={`mock ${kind} ${cls}`} label={label ?? labels[kind]}>
+    {kind === 'vault' && (
+      <div class="app">
+        <div class="side"><p class="h">Library</p><p class="on">Photos</p><p>Documents</p><p>Receipts</p><p class="h">Status</p><p><Icon name="lock" size={13} /> Locked in 5 min</p></div>
+        <div class="main"><div class="tool"><span>All Photos</span><span class="s"><Icon name="search" size={13} /> Search</span></div>
+          <div class="tiles">{tiles.map((h) => <i style={`--h:${h}`}></i>)}</div></div>
+      </div>
+    )}
+    {kind === 'finder' && (
+      <div class="app">
+        <div class="side"><p class="h">Favorites</p><p>Desktop</p><p class="on">Documents</p><p>Downloads</p></div>
+        <div class="main list">
+          <p><Icon name="folder" size={16} /> Invoices</p>
+          <p class="ghost"><Icon name="folder" size={16} /> Taxes <span>hidden, visible with <kbd>⌘</kbd><kbd>⇧</kbd><kbd>.</kbd></span></p>
+          <p><Icon name="folder" size={16} /> Travel</p>
+        </div>
+      </div>
+    )}
+    {kind === 'terminal' && (
+      <div class="term"><p><b>$</b> chflags hidden ~/Documents/Taxes</p><p><b>$</b> ls -lO ~/Documents</p><p class="o">drwxr-xr-x  hidden  Taxes</p><p><b>$</b> <span class="cur"></span></p></div>
+    )}
+    {kind === 'import' && (
+      <div class="imp"><p class="t">Encrypting 128 items…</p><div class="bar"><i></i></div><p class="s">64% · AES-256 · nothing leaves this Mac</p></div>
+    )}
+    {kind === 'drag' && (
+      <div class="app">
+        <div class="main drop"><div class="zone"><Icon name="drag" size={28} /><p>Drop files to encrypt</p></div>
+          <span class="chip c1"><Icon name="camera" size={13} /> IMG_2041.heic</span><span class="chip c2"><Icon name="folder" size={13} /> Passport scans</span></div>
+      </div>
+    )}
+    {kind === 'lockdemo' && (
+      <div class="app lockdemo"><div class="main"><div class="tiles g">{tiles.map((h) => <i style={`--h:${h}`}></i>)}</div>
+        <div class="over"><Icon name="lock" size={30} /><p>Locked</p><span><Icon name="fingerprint" size={16} /> Touch ID</span></div></div></div>
+    )}
+  </MacWindow>
+)}
+<style>
+  /* shared */
+  .app { display: flex; min-height: 260px; font-size: 12px; letter-spacing: 0; color: var(--text); }
+  .side { width: 28%; min-width: 110px; background: var(--bg-alt); border-right: 0.5px solid var(--line); padding: 10px 8px; }
+  .side p { margin: 0 0 2px; padding: 4px 8px; border-radius: 6px; color: var(--text-2); display: flex; gap: 6px; align-items: center; }
+  .side p.on { background: var(--accent); color: #fff; }
+  .side p.h { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-3); padding-top: 10px; }
+  .main { flex: 1; min-width: 0; position: relative; }
+  .tool { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 0.5px solid var(--line); font-weight: 600; }
+  .tool .s { font-weight: 400; color: var(--text-3); display: inline-flex; gap: 4px; align-items: center; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; }
+  .tiles i { aspect-ratio: 1; border-radius: 6px; background: linear-gradient(135deg, hsl(var(--h) 60% 66%), hsl(calc(var(--h) + 45) 62% 46%)); }
+  .list { padding: 10px; } .list p { margin: 0 0 2px; padding: 8px 10px; display: flex; gap: 8px; align-items: center; border-radius: 6px; font-size: 13px; }
+  .list .ghost { opacity: 0.5; background: var(--code-bg); } .list .ghost span { margin-left: auto; font-size: 11px; color: var(--text-2); } .list kbd { font-size: 10px; min-width: 1.4em; padding: 0 4px; }
+  /* terminal: always dark */
+  .term { background: #1e1e1e; color: #e6e6e6; font: 13px/1.6 var(--font-mono); padding: 14px 16px; min-height: 160px; }
+  .term p { margin: 0; } .term b { color: #28c840; font-weight: 500; } .term .o { color: #9a9a9a; } .cur { display: inline-block; width: 8px; height: 15px; background: #e6e6e6; vertical-align: -2px; animation: blink 1.1s steps(1) infinite; }
+  .imp { padding: 36px 28px; min-height: 160px; font-size: 13px; } .imp .t { font-weight: 600; font-size: 15px; margin: 0 0 12px; } .imp .bar { height: 8px; background: var(--bg-alt); border-radius: 99px; overflow: hidden; }
+  .imp .bar i { display: block; height: 100%; width: 64%; background: var(--accent); border-radius: 99px; animation: grow 4s var(--ease) infinite; } .imp .s { color: var(--text-2); margin: 10px 0 0; font-size: 12px; }
+  .drop { display: grid; place-items: center; padding: 20px; min-height: 260px; }
+  .zone { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 36px 40px; text-align: center; color: var(--accent-text); background: var(--accent-tint); } .zone p { margin: 6px 0 0; font-weight: 600; font-size: 13px; }
+  .chip { position: absolute; display: inline-flex; gap: 6px; align-items: center; padding: 5px 10px; background: var(--bg); border: 0.5px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-card); font-size: 11px; }
+  .c1 { top: 22%; left: 8%; transform: rotate(-6deg); } .c2 { bottom: 16%; right: 8%; transform: rotate(5deg); }
+  /* lock demo */
+  .lockdemo .g { animation: blurcycle 6s var(--ease) infinite; }
+  .over { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 4px; background: rgba(20, 22, 30, 0.55); color: #fff; opacity: 0; animation: lockcycle 6s var(--ease) infinite; }
+  .over p { margin: 0; font-weight: 600; font-size: 15px; } .over span { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; opacity: 0.85; }
+  /* lock screen / touch id (always dark, like macOS) */
+  .ls { margin: 0; border-radius: var(--r-window); box-shadow: var(--shadow-window); overflow: hidden; background: radial-gradient(120% 120% at 20% 10%, #2b4b8f, #14182b 60%, #0b0d17); color: #fff; }
+  .ls-in { min-height: 300px; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 28px 20px; text-align: center; }
+  .ls .clock { font: 600 64px/1 var(--font-display); letter-spacing: -0.02em; opacity: 0.95; }
+  .ls .who { width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); display: grid; place-items: center; }
+  .ls .prompt { display: flex; gap: 12px; align-items: center; text-align: left; background: rgba(255, 255, 255, 0.14); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-radius: 14px; padding: 12px 16px; }
+  .ls .prompt strong { display: block; font-size: 14px; } .ls .prompt span { font-size: 12px; opacity: 0.8; } .ls .pw { font-size: 12px; opacity: 0.7; }
+  /* menu bar */
+  .mb { margin: 0; position: relative; padding-bottom: 150px; }
+  .mb .bar { display: flex; gap: 14px; align-items: center; height: 26px; padding: 0 12px; font-size: 12px; background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 0.5px solid var(--line); border-radius: 8px 8px 0 0; }
+  .mb .app { font-weight: 700; } .mb .grow { flex: 1; } .mb .on { background: var(--accent); color: #fff; border-radius: 5px; padding: 1px 6px; display: inline-flex; }
+  .mb .menu { position: absolute; right: 56px; top: 28px; width: 210px; background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 0.5px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-window); padding: 6px; font-size: 13px; }
+  .mb .menu p { margin: 0; padding: 4px 10px; border-radius: 5px; display: flex; justify-content: space-between; } .mb .menu p:first-child { background: var(--accent); color: #fff; } .mb .menu .dim { color: var(--text-3); } .mb .menu hr { margin: 4px 0; } .mb kbd { font-size: 11px; box-shadow: none; background: transparent; border: 0; color: inherit; opacity: 0.7; padding: 0; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes grow { 0% { width: 8%; } 80%, 100% { width: 64%; } }
+  @keyframes blurcycle { 0%, 35% { filter: none; } 45%, 80% { filter: blur(8px); } 92%, 100% { filter: none; } }
+  @keyframes lockcycle { 0%, 38% { opacity: 0; } 48%, 78% { opacity: 1; } 90%, 100% { opacity: 0; } }
+  @media (max-width: 734px) { .app { min-height: 200px; } .side { display: none; } .ls .clock { font-size: 48px; } }
+</style>

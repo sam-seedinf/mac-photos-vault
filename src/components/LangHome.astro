@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import VaultMockup from './VaultMockup.astro';
+import Mock from './Mock.astro';
 import FakeDoorButton from './FakeDoorButton.astro';
 import EmailCapture from './EmailCapture.astro';
 import { allPages, urlOf, langOf, alternatesFor } from '../lib/content';
@@ -13,7 +13,7 @@ const t = ui[lang];
 const alternates: Record<string, string> = reviewedLangs[lang] ? { en: '/', ja: '/ja/', de: '/de/', 'x-default': '/' } : {};
 ---
 <Base title={title} description={description} path={`/${lang}/`} lang={lang} alternates={alternates} jsonLd={homeSchema()} brandSuffix={false}>
-  <div class="wrap">
+  <div class="container">
     <section class="hero">
       <div>
         <h1>{hero}</h1>
@@ -21,7 +21,7 @@ const alternates: Record<string, string> = reviewedLangs[lang] ? { en: '/', ja: 
         <p><FakeDoorButton lang={lang} /></p>
         <p class="muted small">{waitlist}</p>
       </div>
-      <VaultMockup />
+      <Mock kind="vault" />
     </section>
     <section id="guides">
       <h2>{t.nav.guides}</h2>

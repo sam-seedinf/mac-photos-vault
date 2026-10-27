@@ -1,0 +1,40 @@
+---
+import Sky from './Sky.astro';
+import Mock from './Mock.astro';
+import Icon from './Icon.astro';
+import FakeDoorButton from './FakeDoorButton.astro';
+import { OPEN_SOURCE, GITHUB_URL } from '../lib/site';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+---
+<Sky class="hero">
+  <div class="container in">
+    <p class="trust pill">{OPEN_SOURCE ? 'Open source on GitHub' : 'Private beta'} · No account · No tracking</p>
+    <h1 class="t-display-xl">Hide photos and files on your Mac. <span class="gradient-text">Locked in one drag.</span></h1>
+    <p class="checks t-body-lg">AES-256 encrypted · Touch ID · {OPEN_SOURCE ? 'Open source' : 'Drag and drop'}</p>
+    <div class="btn-row c">
+      <FakeDoorButton><Icon name="download" size={18} /> Download for Mac</FakeDoorButton>
+      {GITHUB_URL ? <a class="link-arrow" href={GITHUB_URL} rel="noopener">View source</a> : <a class="link-arrow" href="/guides/">Read the guides</a>}
+    </div>
+    <p class="cap t-caption">Free during beta · macOS 14+ · Apple silicon and Intel (planned)</p>
+  </div>
+  {!compact && (
+    <div class="container vis"><div class="hw" data-parallax><Mock kind="vault" class="big" /></div></div>
+  )}
+</Sky>
+<style>
+  .hero { padding-top: clamp(56px, 9vw, 120px); }
+  .in { text-align: center; }
+  .trust { background: rgba(255,255,255,0.72); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); color: #1d1d1f; margin-bottom: 24px; }
+  :global(:root[data-theme="dark"]) .trust { background: rgba(22,22,23,0.72); color: #f5f5f7; }
+  h1 { max-width: 14ch; margin-inline: auto; }
+  .checks { color: inherit; opacity: 0.8; margin: 20px 0 28px; }
+  .c { justify-content: center; } .c :global(.link-arrow) { color: var(--accent-text); }
+  .cap { margin: 18px 0 0; opacity: 0.7; }
+  .vis { margin-top: clamp(40px, 6vw, 72px); padding-bottom: clamp(0px, 2vw, 24px); }
+  .hw { max-width: 880px; margin-inline: auto; transform: translateY(var(--py, 0px)); animation: pop 900ms var(--ease) both; margin-bottom: -60px; }
+  .hw :global(.big .app) { min-height: clamp(260px, 38vw, 420px); font-size: clamp(11px, 1.3vw, 14px); }
+  .hw :global(.big .tiles) { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  @keyframes pop { from { opacity: 0; transform: scale(0.96) translateY(24px); } }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .trust { background: rgba(22,22,23,0.72); color: #f5f5f7; } }
+</style>

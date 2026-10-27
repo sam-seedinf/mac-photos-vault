@@ -1,0 +1,17 @@
+---
+interface Props { n: number; title: string; flip?: boolean }
+const { n, title, flip = false } = Astro.props;
+---
+<div class={`step ${flip ? 'flip' : ''}`}>
+  <div class="txt reveal"><span class="num" aria-hidden="true">{n}</span><h3>{title}</h3><p class="t-body-lg"><slot name="text" /></p></div>
+  <div class="vis reveal"><slot /></div>
+</div>
+<style>
+  .step { display: grid; grid-template-columns: 1fr 1.25fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .step + .step { margin-top: clamp(56px, 8vw, 110px); }
+  .flip .txt { order: 2; }
+  .num { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-tint); color: var(--accent-text); font: 600 22px/1 var(--font-rounded); margin-bottom: 16px; }
+  .txt h3 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; margin-bottom: 10px; }
+  .txt p { margin: 0; }
+  @media (max-width: 734px) { .step { grid-template-columns: 1fr; } .flip .txt { order: 0; } }
+</style>

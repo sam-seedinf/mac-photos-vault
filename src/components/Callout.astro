@@ -3,17 +3,10 @@ interface Props { type?: 'tip' | 'warning' | 'privacy' }
 const { type = 'tip' } = Astro.props;
 const label = { tip: 'Tip', warning: 'Warning', privacy: 'Privacy' }[type];
 ---
-<aside class={`callout ${type}`} role="note">
-  <strong>{label}</strong>
-  <div><slot /></div>
-</aside>
+<aside class={`callout ${type}`} role="note"><strong>{label}</strong><div><slot /></div></aside>
 <style>
-  .callout { display: grid; gap: 0.2rem; padding: 0.85rem 1rem; border-radius: var(--radius-control); margin: 1.2em 0; border-left: 4px solid var(--accent); background: var(--code-bg); font-size: 0.95rem; }
-  .callout > strong { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; }
+  .callout { display: grid; gap: 4px; padding: 16px 20px; border-radius: var(--r-card); margin: 1.4em 0; background: var(--bg-alt); font-size: 16px; }
+  .callout > strong { font-size: 13px; font-weight: 600; color: var(--accent-text); }
   .callout :global(p:last-child) { margin-bottom: 0; }
-  .warning { border-color: var(--warn); }
-  .warning > strong { color: var(--warn-text); }
-  .privacy { border-color: var(--success); }
-  .privacy > strong { color: var(--success-text); }
-  .tip > strong { color: var(--link); }
+  .warning > strong { color: var(--warn-text); } .privacy > strong { color: var(--success-text); }
 </style>

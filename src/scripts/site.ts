@@ -124,3 +124,42 @@ addEventListener('scroll', () => {
   const h = document.documentElement;
   if ((h.scrollTop + innerHeight) / h.scrollHeight >= 0.75) { fired = true; track('scroll_75'); }
 }, { passive: true });
+
+/* Mobile menu sheet */
+const burger = document.getElementById('burger');
+const sheet = document.getElementById('sheet');
+burger?.addEventListener('click', () => {
+  const open = sheet!.hidden;
+  sheet!.hidden = !open;
+  burger.setAttribute('aria-expanded', String(open));
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+/* Scroll reveal: once, at 15% visible, children staggered by 80ms */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+if (reduce || !('IntersectionObserver' in window)) reveals.forEach((el) => el.classList.add('in'));
+else {
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target as HTMLElement;
+      const sibs = [...(el.parentElement?.querySelectorAll(':scope > .reveal') ?? [])];
+      el.style.transitionDelay = `${Math.max(0, sibs.indexOf(el)) * 80}ms`;
+      el.classList.add('in');
+      io.unobserve(el);
+    }
+  }, { threshold: 0.15 });
+  reveals.forEach((el) => io.observe(el));
+}
+
+/* Hero window: rises up to 40px on scroll */
+const hw = document.querySelector<HTMLElement>('[data-parallax]');
+if (hw && !reduce) {
+  let tick = false;
+  addEventListener('scroll', () => {
+    if (tick) return;
+    tick = true;
+    requestAnimationFrame(() => { hw.style.setProperty('--py', `${-Math.min(40, scrollY / 10)}px`); tick = false; });
+  }, { passive: true });
+}

@@ -1,0 +1,13 @@
+---
+import Icon from './Icon.astro';
+interface Props { icon: string; title: string }
+const { icon, title } = Astro.props;
+---
+<div class="card feature reveal">
+  <div class="ic"><Icon name={icon} size={24} /></div>
+  <h3>{title}</h3>
+  <p><slot /></p>
+</div>
+<style>
+  .ic { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-tint); color: var(--accent-text); display: grid; place-items: center; margin-bottom: 16px; }
+</style>

@@ -1,0 +1,36 @@
+---
+import Mock from './Mock.astro';
+import Icon from './Icon.astro';
+---
+<div class="cmp">
+  <div class="side bad reveal">
+    <p class="lbl">Built-in macOS</p>
+    <div class="m"><Mock kind="finder" /></div>
+    <ul>
+      <li><Icon name="x" size={18} /> Hidden files show with <kbd>⌘</kbd><kbd>⇧</kbd><kbd>.</kbd></li>
+      <li><Icon name="x" size={18} /> Disk Utility images are clunky to mount and eject</li>
+      <li><Icon name="x" size={18} /> The Photos Hidden album isn't separate encryption</li>
+    </ul>
+  </div>
+  <div class="side good reveal">
+    <p class="lbl">Secure Vault <span class="pill accent">Planned</span></p>
+    <div class="m"><Mock kind="vault" /></div>
+    <ul>
+      <li><Icon name="check" size={18} /> Files encrypted with AES-256</li>
+      <li><Icon name="check" size={18} /> Opens with Touch ID, locks when you leave</li>
+      <li><Icon name="check" size={18} /> Drag in, drag out. No mounting</li>
+    </ul>
+  </div>
+</div>
+<style>
+  .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); }
+  .lbl { font-weight: 600; font-size: 21px; margin: 0 0 16px; display: flex; gap: 10px; align-items: center; letter-spacing: 0.009em; }
+  .bad .m { filter: grayscale(1); opacity: 0.8; }
+  .good .m { }
+  ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+  li { display: flex; gap: 10px; align-items: flex-start; font-size: 17px; }
+  li :global(svg) { flex: none; margin-top: 3px; }
+  .bad li { color: var(--text-2); } .bad li :global(svg) { color: var(--danger); }
+  .good li :global(svg) { color: var(--success-text); }
+  @media (max-width: 734px) { .cmp { grid-template-columns: 1fr; } }
+</style>

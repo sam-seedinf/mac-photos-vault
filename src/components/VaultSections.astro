@@ -1,0 +1,90 @@
+---
+import Mock from './Mock.astro';
+import Step from './Step.astro';
+import CompareBlock from './CompareBlock.astro';
+import FeatureCard from './FeatureCard.astro';
+import PricingCard from './PricingCard.astro';
+import FAQ from './FAQ.astro';
+import Icon from './Icon.astro';
+import { vaultFaq } from '../lib/faq';
+import { GITHUB_URL } from '../lib/site';
+---
+<section class="section tight" aria-label="Promises">
+  <div class="container promise">
+    <div class="reveal"><Icon name="key" size={28} /><h3>No account</h3><p class="muted">Nothing to sign up for. Open it and drag.</p></div>
+    <div class="reveal"><Icon name="eyeoff" size={28} /><h3>No tracking</h3><p class="muted">The app is designed to collect nothing about you.</p></div>
+    <div class="reveal"><Icon name="shield" size={28} /><h3>Nothing leaves your Mac</h3><p class="muted">Files and keys stay on this device.</p></div>
+  </div>
+</section>
+
+<section class="section alt" id="how">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>Private in four steps.</h2></div>
+    <Step n={1} title="Drag in"><Fragment slot="text">Drop photos, PDFs or whole folders onto the window.</Fragment><Mock kind="drag" /></Step>
+    <Step n={2} title="Encrypt" flip><Fragment slot="text">Everything is encrypted with AES-256 as it goes in. Originals can be removed.</Fragment><Mock kind="import" /></Step>
+    <Step n={3} title="Lock"><Fragment slot="text">Press <kbd>⌘</kbd><kbd>L</kbd> or just close the lid. The vault locks itself.</Fragment><Mock kind="lockdemo" /></Step>
+    <Step n={4} title="Unlock with Touch ID" flip><Fragment slot="text">One touch and your files are back. No passwords to retype.</Fragment><Mock kind="touchid" /></Step>
+  </div>
+</section>
+
+<section class="section" id="compare">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">Built-in vs Secure Vault</p><h2>Hidden isn't private.</h2><p class="t-body-lg">Hiding a folder keeps it out of sight, not out of reach. See <a href="/compare/built-in-vs-vault-app/">the full comparison</a>.</p></div>
+    <CompareBlock />
+  </div>
+</section>
+
+<section class="section alt" id="features">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">Features</p><h2>Made for the Mac.</h2><p class="t-body-lg">Everything below is planned for the beta.</p></div>
+    <div class="grid feats">
+      <FeatureCard icon="drag" title="Finder drag and drop">Drag files in from Finder, drag them back out when you need them.</FeatureCard>
+      <FeatureCard icon="camera" title="Screenshot-proof window">The vault window is hidden from screenshots and screen sharing.</FeatureCard>
+      <FeatureCard icon="clock" title="Auto-lock">Locks on sleep, on a timer, or when you press ⌘L.</FeatureCard>
+      <FeatureCard icon="key" title="Recovery phrase">A phrase only you hold, because we can't reset it for you.</FeatureCard>
+      <FeatureCard icon="search" title="Spotlight-proof">Encrypted contents never appear in Spotlight or Quick Look.</FeatureCard>
+      <FeatureCard icon="menubar" title="Menu bar quick add">Add files from the menu bar without opening the app.</FeatureCard>
+    </div>
+    <div class="menubar reveal"><Mock kind="menubar" /></div>
+  </div>
+</section>
+
+<section class="section dark" id="security">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">Security</p><h2>Open code. Checkable crypto.</h2><p class="t-body-lg">The planned design. We'll publish the full write-up before the beta ships so you can check it.</p></div>
+    <div class="grid sec">
+      <div class="card mono reveal"><code>AES-256-GCM</code><p>Authenticated encryption for every file.</p></div>
+      <div class="card mono reveal"><code>PBKDF2-SHA512 · 600K</code><p>Slows down password guessing.</p></div>
+      <div class="card mono reveal"><code>Zero plaintext on disk</code><p>Nothing readable is left behind.</p></div>
+    </div>
+    {GITHUB_URL && <p class="btn-row links"><a class="link-arrow" href={`${GITHUB_URL}/blob/main/SECURITY.md`}>Read SECURITY.md</a><a class="link-arrow" href={GITHUB_URL}>GitHub</a></p>}
+  </div>
+</section>
+
+<section class="section alt" id="pricing">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">Pricing</p><h2>Free. Or $29, once.</h2></div>
+    <PricingCard />
+  </div>
+</section>
+
+<section class="section" id="faq-home">
+  <div class="container narrow">
+    <div class="section-head reveal"><p class="eyebrow">FAQ</p><h2>Questions, answered.</h2></div>
+    <FAQ faq={vaultFaq} bare />
+  </div>
+</section>
+<style>
+  .promise { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; text-align: center; }
+  .promise :global(svg) { color: var(--accent-text); margin-bottom: 8px; } .promise h3 { margin: 0 0 4px; font-size: 21px; } .promise p { margin: 0; font-size: 16px; }
+  .feats { grid-template-columns: repeat(3, 1fr); }
+  .menubar { max-width: 560px; margin: 48px auto 0; }
+  .dark { background: #000; color: #f5f5f7; }
+  .dark :global(h2) { color: #f5f5f7; } .dark :global(.t-body-lg) { color: #a1a1a6; } .dark :global(.eyebrow) { color: #2997ff; }
+  .sec { grid-template-columns: repeat(3, 1fr); }
+  .dark .card { background: #161617; color: #f5f5f7; } .dark .card code { font-size: 18px; background: none; padding: 0; color: #30d158; display: block; margin-bottom: 8px; } .dark .card p { color: #a1a1a6; }
+  .links { justify-content: center; margin-top: 32px; } .dark :global(.link-arrow) { color: #2997ff; }
+  .narrow { max-width: 760px; }
+  @media (max-width: 1068px) { .feats, .sec { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 734px) { .promise, .feats, .sec { grid-template-columns: 1fr; } }
+</style>
