@@ -1,0 +1,35 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+interface Props {
+  item: { name: string; tagline: string; price: string; platforms: string; openSource: boolean | null; url?: string; ours?: boolean; affiliate?: boolean; bestFor: string; pros: string[]; cons: string[] };
+  lang?: Lang; rank?: number;
+}
+const { item, lang = 'en', rank } = Astro.props;
+const initial = item.name.trim()[0]?.toUpperCase() ?? '?';
+const rel = item.affiliate ? 'nofollow sponsored noopener' : 'noopener';
+---
+<article class="app">
+  <div class="icon" aria-hidden="true">{initial}</div>
+  <div class="body">
+    <h3>{rank ? `${rank}. ` : ''}{item.url && !item.ours ? <a href={item.url} rel={rel} target="_blank" data-outbound data-app-name={item.name} data-affiliate={String(item.affiliate ?? false)}>{item.name}</a> : item.name}{item.ours && <span class="ours">{ui[lang].ours}</span>}</h3>
+    <p class="tag">{item.tagline}</p>
+    <p class="meta">{item.price} · {item.platforms}{item.openSource ? ' · Open source' : ''}</p>
+    <div class="pc">
+      <ul class="pros">{item.pros.map((p) => <li>{p}</li>)}</ul>
+      <ul class="cons">{item.cons.map((p) => <li>{p}</li>)}</ul>
+    </div>
+  </div>
+</article>
+<style>
+  .app { display: flex; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+  .icon { flex: none; width: 48px; height: 48px; border-radius: 11px; background: var(--code-bg); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; color: var(--text-2); font-size: 1.2rem; }
+  h3 { margin: 0 0 0.15rem; font-size: 1.1rem; }
+  .ours { margin-left: 0.5rem; font-size: 0.7rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 99px; background: var(--accent); color: var(--on-accent); vertical-align: middle; }
+  .tag { margin: 0; }
+  .meta { margin: 0.2rem 0 0.6rem; font-size: 0.85rem; color: var(--text-2); }
+  .pc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 1.5rem; }
+  ul { margin: 0; padding: 0; list-style: none; font-size: 0.92rem; }
+  li { padding-left: 1.3rem; position: relative; margin-bottom: 0.25rem; }
+  .pros li::before { content: "+"; color: var(--success-text); position: absolute; left: 0.2rem; font-weight: 700; }
+  .cons li::before { content: "−"; color: var(--warn-text); position: absolute; left: 0.2rem; font-weight: 700; }
+</style>

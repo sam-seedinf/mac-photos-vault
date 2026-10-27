@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found" description="That page doesn't exist. Try the Mac privacy guides or search the site." path="/404/" noindex={true}>
+  <div class="wrap prose">
+    <h1>Page not found</h1>
+    <p>Try a search, or start with one of these:</p>
+    <div id="search" data-pagefind-ignore></div>
+    <ul>
+      <li><a href="/guides/">All Mac privacy guides</a></li>
+      <li><a href="/guides/hide-files-on-mac/">How to hide files on Mac</a></li>
+      <li><a href="/best/">Best Mac privacy apps</a></li>
+      <li><a href="/vault/">Secure Vault for Mac</a></li>
+    </ul>
+  </div>
+  <script is:inline>
+    (function () {
+      var el = document.getElementById('search');
+      var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/pagefind/pagefind-ui.css'; document.head.appendChild(css);
+      var s = document.createElement('script'); s.src = '/pagefind/pagefind-ui.js';
+      s.onload = function () { new PagefindUI({ element: '#search', showImages: false }); };
+      s.onerror = function () { el.remove(); };
+      document.head.appendChild(s);
+    })();
+  </script>
+</Base>

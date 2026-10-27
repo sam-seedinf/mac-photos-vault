@@ -1,0 +1,13 @@
+---
+interface Props { keys: string | string[] }
+const { keys } = Astro.props;
+const list = Array.isArray(keys) ? keys : [...keys];
+---
+<span class="kbd-group" aria-label={list.join(' ')}>{list.map((k) => <kbd class="key" aria-hidden="true">{k}</kbd>)}</span>
+<style>
+  .kbd-group { display: inline-flex; gap: 3px; vertical-align: baseline; }
+  .key {
+    display: inline-block; min-width: 1.6em; padding: 0.05em 0.45em; text-align: center; font: 500 0.85em var(--font-ui);
+    background: var(--window); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; color: var(--text);
+  }
+</style>

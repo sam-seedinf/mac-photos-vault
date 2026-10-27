@@ -1,0 +1,47 @@
+---
+kind: guide
+title: "How to Create a Hidden Folder on Mac"
+description: "Create a hidden folder on Mac with two Terminal commands, learn the Finder shortcut that shows it, and understand what Spotlight may still reveal."
+keyword: hidden folder mac
+category: Hide & protect
+published: 2026-10-27
+updated: 2026-10-27
+answer: "Open Terminal and run `mkdir ~/.private`. A folder whose name starts with a dot is hidden in Finder. Open it again with Finder's Go to Folder (⇧⌘G), or press ⌘⇧. to show hidden items. Hidden folders only keep out casual browsing; they are not encrypted."
+methods:
+  head: ["Approach", "Command", "Shows with ⌘⇧.", "Notes"]
+  rows:
+    - ["New folder with a dot name", "`mkdir ~/.private`", "✓", "Created hidden from the start"]
+    - ["Hide an existing folder", "`chflags hidden ~/Documents/Taxes`", "✓", "Keeps the original name"]
+    - ["Un-hide a folder", "`chflags nohidden ~/Documents/Taxes`", "–", "Reverses the flag"]
+steps:
+  - title: "Create the hidden folder"
+    body: "Open Terminal and run `mkdir ~/.private`. The `~` stands for your home folder, and the leading dot hides the folder from Finder."
+  - title: "Or hide a folder you already have"
+    body: "Type `chflags hidden ` (with a trailing space), drag the folder from Finder into the Terminal window, and press Return."
+  - title: "Open it again"
+    body: "In Finder choose Go > Go to Folder, type `~/.private`, and press Return. You can also show hidden items in the current window with the shortcut below."
+    keys: ["⇧", "⌘", "G"]
+  - title: "Toggle hidden items in Finder"
+    body: "Press this shortcut in any Finder window to show or hide dot files and flagged items."
+    keys: ["⌘", "⇧", "."]
+related: [guides/hide-files-on-mac, guides/lock-folder-on-mac, guides/password-protect-folder-on-mac]
+best: best/file-encryption-apps-for-mac
+faq:
+  - q: "How do I find a hidden folder I forgot about?"
+    a: "Press ⌘⇧. in Finder to show hidden items, or run `ls -a ~` in Terminal to list everything in your home folder, including dot-prefixed folders."
+  - q: "Will Spotlight search find a hidden folder?"
+    a: "Spotlight generally skips dot-prefixed items in its normal results, but behavior can vary between macOS versions and with how a folder was hidden. Search for a file name from inside the folder to test your own Mac."
+  - q: "Can I hide a folder from other user accounts?"
+    a: "Hiding is cosmetic. To keep another account out, rely on file permissions or, better, encryption, because an administrator can read most files."
+external:
+  - label: "Apple Support: Mac User Guide"
+    url: "https://support.apple.com/guide/mac-help/welcome/mac"
+---
+
+## Limits and risks
+
+- A hidden folder is still an ordinary folder. Anyone who runs `ls -a`, uses ⇧⌘G with the right path, or presses ⌘⇧. can open it.
+- Spotlight, backups and some apps' recent-files lists may still reveal names or contents. Test by searching for a file inside the folder.
+- Nothing is encrypted. If the Mac is lost and FileVault is off, the files are readable from the disk.
+
+<Callout type="tip">Pair a hidden folder with an encrypted disk image if the contents matter. Hiding keeps it out of sight; encryption keeps it unreadable.</Callout>

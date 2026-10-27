@@ -1,0 +1,62 @@
+---
+kind: best
+title: "写真を隠せるおすすめアプリ（Mac）"
+description: "Mac で写真を隠す・守る方法を、標準の非表示アルバムからオープンソースの暗号化ツールまで比較します。メリットと弱点も正直に紹介します。"
+keyword: 秘密 写真 アプリ
+group: best/photo-vault-apps-for-mac
+category: 写真
+published: 2026-10-27
+updated: 2026-10-27
+answer: "手軽さなら標準の「写真」の非表示アルバム、しっかり守るなら Cryptomator や暗号化ディスクイメージがおすすめです。写真を隠すアプリの多くは iPhone 向けのため、Mac の選択肢は限られます。当社の Secure Vault for Mac はベータ版（自社製）で、その旨を明記しています。"
+items:
+  - name: "Secure Vault for Mac"
+    tagline: "当社の暗号化 Vault アプリ。非公開ベータ中。"
+    price: "ベータ期間は無料、将来は買い切りを予定"
+    platforms: "macOS（予定）"
+    openSource: null
+    url: "https://securemacapp.com/vault/"
+    ours: true
+    bestFor: "Touch ID で頻繁に開く写真"
+    pros: ["AES-256、鍵は Mac 内に保管、Touch ID（予定）", "ドラッグ＆ドロップでマウント不要"]
+    cons: ["未リリース（機能は計画段階）", "第三者による監査はまだありません"]
+  - name: "「写真」の非表示アルバム"
+    tagline: "Apple 標準の機能。"
+    price: "無料（macOS に付属）"
+    platforms: "Mac、iPhone、iPad"
+    openSource: false
+    bestFor: "手軽なプライバシー保護"
+    pros: ["追加インストール不要", "Ventura 以降は Touch ID／パスワードでロック"]
+    cons: ["ディスク上で個別に暗号化されない", "写真のみ"]
+  - name: "暗号化ディスクイメージ"
+    tagline: "ディスクユーティリティで作るパスワード付きイメージ。"
+    price: "無料（macOS に付属）"
+    platforms: "Mac"
+    openSource: false
+    bestFor: "機密写真のフォルダ"
+    pros: ["AES 暗号化", "どんなファイルにも使える"]
+    cons: ["手動でマウント／取り出し", "パスワードの復元不可"]
+  - name: "Cryptomator"
+    tagline: "クラウド保存前に暗号化するオープンソースのツール。"
+    price: "デスクトップ版は無料、モバイル版は有料"
+    platforms: "Mac、Windows、Linux、iOS、Android"
+    openSource: true
+    url: "https://cryptomator.org/"
+    bestFor: "クラウドで同期する写真"
+    pros: ["オープンソース", "どのクラウドでも使える"]
+    cons: ["写真ギャラリーではない", "Mac ではマウント用の補助コンポーネントが必要"]
+related: [guides/hide-photos-on-mac, guides/password-protect-folder-on-mac]
+faq:
+  - q: "Mac に写真を隠すアプリはありますか？"
+    a: "iPhone 向けが中心です。Mac では「写真」の非表示アルバム、暗号化コンテナ、開発中の Secure Vault for Mac などが選択肢です。"
+  - q: "非表示アルバムは安全ですか？"
+    a: "アプリ内でアクセスが制限されます。ディスク上の保護には FileVault をオンにしてください。"
+  - q: "なぜ自社アプリが載っているのですか？"
+    a: "質問に関連するためです。自社製と明記し、未リリースで、他のアプリと同じ基準で長所と短所を載せています。"
+external:
+  - label: "Apple サポート: 写真ユーザガイド"
+    url: "https://support.apple.com/ja-jp/guide/photos/welcome/mac"
+---
+
+## 比較の基準
+
+暗号化の有無、鍵の保管場所、日常の使いやすさ、対応プラットフォームと同期、価格とオープンソースかどうか。価格は変わるため、各社サイトで確認してください。

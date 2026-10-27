@@ -1,0 +1,27 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+interface Props { lang?: Lang; source?: string; app?: string; compact?: boolean }
+const { lang = 'en', source = '', app = 'vault', compact = false } = Astro.props;
+const t = ui[lang];
+---
+<form class="sub" data-subscribe data-app={app} data-lang={lang} data-source={source} method="post" action="/api/subscribe" novalidate>
+  <label class="sr-only" for={`em-${source}-${app}-${compact}`}>{t.emailLabel}</label>
+  <div class="row">
+    <input id={`em-${source}-${app}-${compact}`} type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+    <button type="submit" class="btn">{t.emailCta}</button>
+  </div>
+  <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp" />
+  <label class="opt"><input type="checkbox" name="tips" /> {t.tipsOpt}</label>
+  <p class="micro">{t.emailMicro}</p>
+  <p class="status" role="status" aria-live="polite" hidden></p>
+</form>
+<style>
+  .row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  input[type="email"] { flex: 1 1 220px; font: inherit; padding: 0.55rem 0.8rem; border-radius: var(--radius-control); border: 1px solid var(--line); background: var(--window); color: var(--text); }
+  .hp { position: absolute; left: -9999px; }
+  .opt { display: flex; gap: 0.5rem; align-items: center; font-size: 0.88rem; margin-top: 0.6rem; }
+  .micro { font-size: 0.8rem; color: var(--text-2); margin: 0.4rem 0 0; }
+  .status { margin: 0.6rem 0 0; font-weight: 600; font-size: 0.92rem; }
+  .status.err { color: var(--warn-text); }
+  .status.ok { color: var(--success-text); }
+</style>

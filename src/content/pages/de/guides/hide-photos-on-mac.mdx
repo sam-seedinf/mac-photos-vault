@@ -1,0 +1,44 @@
+---
+kind: guide
+title: "Fotos auf dem Mac verstecken"
+description: "Fotos auf dem Mac verstecken: Bilder in der Fotos-App ausblenden, das Album „Ausgeblendet“ öffnen und sperren, und was iCloud damit zu tun hat."
+keyword: fotos verstecken app
+group: guides/hide-photos-on-mac
+category: Fotos
+published: 2026-10-27
+updated: 2026-10-27
+answer: "Wählen Sie in der Fotos-App das Bild aus und dann Bild > Foto ausblenden (⌘L). Es landet im Album „Ausgeblendet“. Ab macOS Ventura ist dieses Album standardmäßig gesperrt und lässt sich mit Touch ID oder dem Anmeldepasswort öffnen. Verschlüsselt wird dadurch nichts."
+methods:
+  head: ["Methode", "Ablageort", "Sperre", "iCloud-Fotos-Sync"]
+  rows:
+    - ["Foto ausblenden in Fotos", "Album „Ausgeblendet“", "Touch ID oder Passwort (ab Ventura)", "✓"]
+    - ["In ein verschlüsseltes Image verschieben", "Separates Image", "Passwort", "✗"]
+    - ["Vault-App", "In der App", "Touch ID oder Passwort", "je nach App"]
+steps:
+  - title: "Foto ausblenden"
+    body: "Öffnen Sie Fotos, wählen Sie ein oder mehrere Bilder und dann Bild > Foto ausblenden."
+    keys: ["⌘", "L"]
+  - title: "Album „Ausgeblendet“ öffnen"
+    body: "Das Album erscheint in der Seitenleiste (in neueren Versionen unter „Dienstprogramme“). Fehlt es, wählen Sie Darstellung > Album „Ausgeblendet“ einblenden und authentifizieren sich mit Touch ID oder Passwort."
+  - title: "Wieder einblenden"
+    body: "Wählen Sie das Foto im Album „Ausgeblendet“ und dann Bild > Foto einblenden."
+related: [guides/password-protect-folder-on-mac]
+best: best/photo-vault-apps-for-mac
+faq:
+  - q: "Werden ausgeblendete Fotos mit dem iPhone synchronisiert?"
+    a: "Mit iCloud-Fotos ja: Der ausgeblendete Status wird auf allen Geräten mit demselben Apple-Account übernommen."
+  - q: "Sind ausgeblendete Fotos verschlüsselt?"
+    a: "Der Zugriff wird in der Fotos-App kontrolliert. Die Mediathek auf der Festplatte ist nur mit aktiviertem FileVault geschützt."
+  - q: "Können andere Apps ausgeblendete Fotos sehen?"
+    a: "Das hängt von der App ab. Besonders sensible Fotos sollten Sie außerhalb der Fotos-Mediathek verschlüsselt aufbewahren."
+external:
+  - label: "Apple Support: Fotos Benutzerhandbuch"
+    url: "https://support.apple.com/de-de/guide/photos/welcome/mac"
+---
+
+## Grenzen und Risiken
+
+- **Keine eigene Verschlüsselung.** Die Sperre hält nur Personen ab, die Fotos an Ihrem entsperrten Mac öffnen.
+- **Sync verteilt die Fotos.** Mit iCloud-Fotos liegen auch ausgeblendete Bilder auf allen Geräten und in iCloud.
+- **Exportierte Fotos sind normale Dateien.** Geteilte oder per AirDrop gesendete Bilder sind nicht mehr geschützt.
+- **FileVault prüfen.** Ohne FileVault kann die Mediathek direkt von der Festplatte gelesen werden.

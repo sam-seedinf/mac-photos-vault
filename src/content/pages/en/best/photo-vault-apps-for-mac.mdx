@@ -1,0 +1,89 @@
+---
+kind: best
+title: "Best Photo Vault Apps for Mac (2026)"
+description: "Six ways to keep photos private on a Mac, from the built-in Hidden album to open-source encryption tools, with honest pros and cons."
+keyword: photo vault app
+category: Photos
+published: 2026-10-27
+updated: 2026-10-27
+answer: "For most people the built-in Photos Hidden album is the simplest option; for stronger protection, Cryptomator or an encrypted disk image keep photos encrypted at rest. Dedicated photo vault apps are mostly built for iPhone, so Mac choices are fewer. Secure Vault for Mac, our own app, is in private beta and is labelled as ours."
+items:
+  - name: "Secure Vault for Mac"
+    tagline: "Our encrypted vault for photos and files, in private beta."
+    price: "Free during beta; planned one-time purchase"
+    platforms: "macOS (planned)"
+    openSource: null
+    url: "https://securemacapp.com/vault/"
+    ours: true
+    bestFor: "Photos you open often, with Touch ID"
+    pros: ["Designed for photos and files on Mac: AES-256, keys kept on your Mac, Touch ID unlock", "Drag and drop, no mounting or ejecting"]
+    cons: ["Not released yet; features are plans until the beta ships", "No independent security audit yet"]
+  - name: "Photos Hidden album"
+    tagline: "Apple's built-in way to move pictures out of your main library."
+    price: "Free, included with macOS"
+    platforms: "Mac, iPhone, iPad"
+    openSource: false
+    bestFor: "Quick, casual privacy"
+    pros: ["Nothing to install", "Locked with Touch ID or password on macOS Ventura and later", "Syncs through iCloud Photos"]
+    cons: ["Photos aren't separately encrypted on disk", "Photos only, no other file types"]
+  - name: "Encrypted disk image (Disk Utility)"
+    tagline: "A password-protected image holding any files, including photos."
+    price: "Free, included with macOS"
+    platforms: "Mac"
+    openSource: false
+    bestFor: "A folder of sensitive photos"
+    pros: ["AES encryption with no extra software", "Works for any file type"]
+    cons: ["Mount and eject by hand", "No photo browsing features while mounted beyond Finder previews"]
+  - name: "Cryptomator"
+    tagline: "Open-source vaults that encrypt files before they reach cloud storage."
+    price: "Free on desktop; mobile apps are paid"
+    platforms: "Mac, Windows, Linux, iOS, Android"
+    openSource: true
+    url: "https://cryptomator.org/"
+    bestFor: "Photos you sync through iCloud Drive, Dropbox or Google Drive"
+    pros: ["Open source and widely reviewed", "Each vault appears as a virtual drive"]
+    cons: ["Generic file interface, not a photo gallery", "Mounting a vault needs a helper component on Mac"]
+  - name: "VeraCrypt"
+    tagline: "Open-source encrypted containers for serious users."
+    price: "Free"
+    platforms: "Mac, Windows, Linux"
+    openSource: true
+    url: "https://www.veracrypt.fr/"
+    bestFor: "Cross-platform encrypted containers"
+    pros: ["Mature, audited open-source project", "Works on every desktop platform"]
+    cons: ["Needs macFUSE on Mac", "Interface feels dated"]
+  - name: "Keka"
+    tagline: "Archiver that can create AES-encrypted 7z and zip files."
+    price: "Free from the developer's site; paid in the Mac App Store"
+    platforms: "Mac"
+    openSource: true
+    url: "https://www.keka.io/"
+    bestFor: "Locking up a finished batch of photos"
+    pros: ["Simple drag-and-drop encrypted archives", "Handles many archive formats"]
+    cons: ["Archives, not a live vault: unpack to view or edit", "Zip encryption options vary, so choose 7z or AES-256 zip"]
+related: [guides/hide-photos-on-mac, guides/password-protect-folder-on-mac, compare/built-in-vs-vault-app]
+faq:
+  - q: "Is there a good photo vault app for Mac?"
+    a: "Most photo vault apps target iPhone. On Mac your realistic options are the Photos Hidden album, encrypted containers such as Cryptomator or VeraCrypt, and newer Mac-native vaults like our own Secure Vault for Mac, which is still in beta."
+  - q: "Is the Photos Hidden album secure?"
+    a: "It is access-controlled inside the Photos app, locked by Touch ID or password on recent macOS. It isn't separate encryption, so turn on FileVault to protect the library on disk."
+  - q: "Which option is best for iCloud sync?"
+    a: "The Hidden album syncs through iCloud Photos. Cryptomator encrypts files before they upload to cloud drives. An encrypted disk image can sync, but it works best as a sparse bundle."
+  - q: "Why is your own app on the list?"
+    a: "Because it's relevant to the question. It's labelled as ours, it's marked as unreleased, and its pros and cons are listed like the others."
+external:
+  - label: "Apple Support: Photos User Guide"
+    url: "https://support.apple.com/guide/photos/welcome/mac"
+---
+
+## How we compared them
+
+We looked at five things:
+
+1. **Encryption.** Are the photos encrypted at rest, and with what?
+2. **Key handling.** Does the key stay on your Mac?
+3. **Everyday use.** Can you browse and add photos without mounting or exporting?
+4. **Platforms and sync.** Does it work on the devices you use?
+5. **Price and openness.** Is it free, and can anyone inspect the code?
+
+Prices change often, so confirm on each vendor's site. Entries marked "ours" are made by us.

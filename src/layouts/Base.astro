@@ -1,0 +1,185 @@
+---
+import '../styles/global.css';
+import { ui, htmlLang, reviewedLangs, type Lang } from '../lib/i18n';
+import { NAME, GA_ID, CLARITY_ID, abs } from '../lib/site';
+import LangSwitch from '../components/LangSwitch.astro';
+import FakeDoorButton from '../components/FakeDoorButton.astro';
+import SubscribeForm from '../components/SubscribeForm.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string; // canonical path, e.g. /guides/foo/
+  lang?: Lang;
+  alternates?: Record<string, string>;
+  switchTargets?: Partial<Record<Lang, string>>;
+  noindex?: boolean;
+  og?: string;
+  jsonLd?: unknown[];
+  type?: 'website' | 'article';
+  brandSuffix?: boolean;
+}
+const {
+  title, description, path, lang = 'en', alternates = {}, switchTargets, noindex = !reviewedLangs[lang as Lang],
+  og = '/og/default.png', jsonLd = [], type = 'website', brandSuffix = true,
+} = Astro.props;
+
+const t = ui[lang];
+const fullTitle = brandSuffix && `${title} | ${NAME}`.length <= 60 ? `${title} | ${NAME}` : title;
+const canonical = abs(path);
+const robots = noindex ? 'noindex, follow' : null;
+const nav = {
+  en: { guides: '/guides/', best: '/best/' },
+  ja: { guides: '/ja/#guides', best: '/ja/best/photo-vault-apps/' },
+  de: { guides: '/de/#guides', best: '/best/' },
+}[lang];
+const targets = switchTargets ?? { en: '/', ja: '/ja/', de: '/de/' };
+const modal = {
+  en: ['Secure Vault is in private beta.', 'Get the download link by email when it opens.', "You're on the list. We'll email you the download.", 'Close'],
+  ja: ['Secure Vault は非公開ベータ中です。', 'ベータ公開時にダウンロードリンクをメールでお送りします。', '登録しました。ダウンロードリンクをメールでお送りします。', '閉じる'],
+  de: ['Secure Vault ist in der privaten Beta.', 'Sie erhalten den Download-Link per E-Mail, sobald die Beta startet.', 'Sie stehen auf der Liste. Wir senden Ihnen den Download per E-Mail.', 'Schließen'],
+}[lang];
+const footerHeads = {
+  en: ['Guides', 'Apps', 'Company', 'Language'],
+  ja: ['ガイド', 'アプリ', '会社情報', '言語'],
+  de: ['Anleitungen', 'Apps', 'Unternehmen', 'Sprache'],
+}[lang];
+---
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {robots && <meta name="robots" content={robots} />}
+    {Object.entries(alternates).map(([hl, href]) => <link rel="alternate" hreflang={hl} href={abs(href)} />)}
+    <meta property="og:site_name" content={NAME} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={abs(og)} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : lang === 'ja' ? 'ja_JP' : 'de_DE'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={abs(og)} />
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      try { var th = localStorage.getItem('theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+    </script>
+    {GA_ID && (
+      <script is:inline define:vars={{ GA_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+        gtag('js', new Date());
+        gtag('config', GA_ID);
+        var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+      </script>
+    )}
+    {jsonLd.map((o) => <script type="application/ld+json" set:html={JSON.stringify(o)} />)}
+  </head>
+  <body data-lang={lang} data-ga={GA_ID ? '1' : '0'} data-clarity={CLARITY_ID}>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="topbar">
+      <div class="wrap">
+        <a class="logo" href={lang === 'en' ? '/' : `/${lang}/`}>
+          <img src="/favicon.svg" alt="" width="24" height="24" />{NAME}
+        </a>
+        <nav aria-label="Main">
+          <a href={nav.guides} aria-current={path.startsWith('/guides') || path.includes('/guides/') ? 'true' : undefined}>{t.nav.guides}</a>
+          <a href="/vault/" aria-current={path === '/vault/' ? 'true' : undefined}>{t.nav.apps}</a>
+          <a href={nav.best} aria-current={path.includes('/best/') ? 'true' : undefined}>{t.nav.best}</a>
+          <a href="/tools/hidden-file-checker/" aria-current={path.startsWith('/tools') ? 'true' : undefined}>{t.nav.tools}</a>
+        </nav>
+        <div class="right">
+          <LangSwitch current={lang} targets={targets} />
+          <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle light / dark theme"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 2a7 7 0 0 1 0 14z" fill="currentColor"/></svg></button>
+          <FakeDoorButton lang={lang} size="sm" />
+        </div>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="footer">
+      <div class="wrap">
+        <div class="cols">
+          <div>
+            <h2>{footerHeads[0]}</h2>
+            <ul>
+              <li><a href="/guides/hide-files-on-mac/">Hide files on Mac</a></li>
+              <li><a href="/guides/password-protect-folder-on-mac/">Password-protect a folder</a></li>
+              <li><a href="/guides/hide-photos-on-mac/">Hide photos on Mac</a></li>
+              <li><a href="/guides/encrypt-files-on-mac/">Encrypt files on Mac</a></li>
+              <li><a href="/guides/">All guides</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>{footerHeads[1]}</h2>
+            <ul>
+              <li><a href="/vault/">Secure Vault for Mac</a></li>
+              <li><a href="/best/photo-vault-apps-for-mac/">Best photo vault apps</a></li>
+              <li><a href="/alternatives/vaultaire/">Vaultaire alternatives</a></li>
+              <li><a href="/tools/hidden-file-checker/">Hidden File Checker</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>{footerHeads[2]}</h2>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/privacy/">Privacy</a></li>
+              <li><a href="/terms/">Terms</a></li>
+              <li><a href="/contact/">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>{footerHeads[3]}</h2>
+            <ul>
+              <li><a href="/">English</a></li>
+              <li><a href="/ja/" lang="ja">日本語</a></li>
+              <li><a href="/de/" lang="de">Deutsch</a></li>
+            </ul>
+          </div>
+        </div>
+        <p>© {new Date().getFullYear()} {NAME}. {t.unofficial} “Mac” and “macOS” are used descriptively only.</p>
+      </div>
+    </footer>
+
+    <dialog id="fd-modal" aria-labelledby="fd-title">
+      <form method="dialog" class="x"><button aria-label={modal[3]}>×</button></form>
+      <div class="fd-form">
+        <h2 id="fd-title">{modal[0]}</h2>
+        <p>{modal[1]}</p>
+        <SubscribeForm lang={lang} source="modal" app="vault" />
+      </div>
+      <div class="fd-done" hidden>
+        <h2>{modal[2]}</h2>
+        <p><a href="#" data-close-modal>{modal[3]}</a></p>
+      </div>
+    </dialog>
+
+    {(GA_ID || CLARITY_ID) && (
+      <div id="consent" role="region" aria-label="Cookie consent" hidden>
+        <p>We use analytics cookies to see which guides help. Nothing is shared for ads. <a href="/privacy/">Details</a></p>
+        <div><button class="btn sm" data-consent="granted">Accept</button> <button class="btn sm secondary" data-consent="denied">Decline</button></div>
+      </div>
+    )}
+    <script>import '../scripts/site.ts';</script>
+    <style is:global>
+      dialog#fd-modal { border: 1px solid var(--line); border-radius: var(--radius-window); background: var(--window); color: var(--text); box-shadow: var(--shadow-window); width: min(460px, calc(100% - 32px)); padding: 1.6rem; }
+      dialog#fd-modal::backdrop { background: rgba(0,0,0,0.35); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+      dialog#fd-modal h2 { margin: 0 0 0.4rem; font-size: 1.25rem; }
+      dialog#fd-modal .x { position: absolute; top: 0.5rem; right: 0.6rem; }
+      dialog#fd-modal .x button { background: none; border: 0; font-size: 1.5rem; cursor: pointer; color: var(--text-2); }
+      #consent { position: fixed; z-index: 60; left: 16px; right: 16px; bottom: 16px; max-width: 560px; margin-inline: auto; background: var(--window); border: 1px solid var(--line); border-radius: var(--radius-window); box-shadow: var(--shadow-window); padding: 1rem 1.2rem; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 0.9rem; }
+      #consent[hidden] { display: none; }
+      #consent p { margin: 0; flex: 1 1 260px; }
+    </style>
+  </body>
+</html>

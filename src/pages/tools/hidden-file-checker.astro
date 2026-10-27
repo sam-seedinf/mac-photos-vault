@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import MacWindow from '../../components/MacWindow.astro';
+import FAQ from '../../components/FAQ.astro';
+import EmailCapture from '../../components/EmailCapture.astro';
+import { breadcrumbSchema, faqSchema } from '../../lib/schema';
+import { SITE } from '../../lib/site';
+
+const faq = [
+  { q: 'Is my listing uploaded anywhere?', a: 'No. The checker runs entirely in your browser. Nothing you paste is sent to a server.' },
+  { q: 'Which Terminal command should I use?', a: 'Run `ls -laO` in the folder you want to check. The -O flag adds a column showing file flags such as `hidden` and `uchg`. A plain `ls -la` still works, but it can only reveal dot-prefixed names.' },
+  { q: 'Are hidden files invisible to Spotlight?', a: 'Dot-prefixed items are generally left out of Spotlight results. Behavior for items hidden with the flag can vary by macOS version, so treat our Spotlight column as a rule of thumb and test on your Mac.' },
+];
+const crumbs = [{ name: 'Home', url: '/' }, { name: 'Hidden File Checker', url: '/tools/hidden-file-checker/' }];
+const app = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Hidden File Checker for Mac', url: `${SITE}/tools/hidden-file-checker/`, applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any (runs in the browser)', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } };
+const sample = `drwxr-xr-x   8 sam  staff  -  256 Oct 27 10:02 .
+-rw-r--r--@  1 sam  staff  hidden 6148 Oct 27 09:12 .DS_Store
+drwx------   5 sam  staff  -  160 Oct 20 08:00 .ssh
+drwxr-xr-x   4 sam  staff  hidden  128 Oct 21 11:30 Taxes
+-rw-r--r--   1 sam  staff  uchg  2048 Oct 22 14:15 contract.pdf
+-rw-r--r--   1 sam  staff  -  512 Oct 23 16:40 notes.txt`;
+---
+<Base title="Free Hidden File Checker for Mac" description="Paste a Terminal ls -laO listing and see which files are hidden, locked or visible, and how. Runs in your browser; nothing is uploaded." path="/tools/hidden-file-checker/" alternates={{ en: '/tools/hidden-file-checker/', 'x-default': '/tools/hidden-file-checker/' }} jsonLd={[app, breadcrumbSchema(crumbs), faqSchema(faq)].filter(Boolean)}>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Free Hidden File Checker for Mac</h1>
+    <p class="prose">Paste the output of <code>ls -laO</code> and this page explains what's hidden, by which mechanism, and whether Finder shows it. It runs in your browser; nothing is uploaded.</p>
+    <MacWindow title="Hidden File Checker">
+      <div class="tool">
+        <label for="listing"><strong>Terminal output</strong> (run <code>ls -laO</code> in a folder)</label>
+        <textarea id="listing" rows="9" spellcheck="false" placeholder="Paste here…"></textarea>
+        <p class="row"><button class="btn" id="run" type="button">Check</button> <button class="btn secondary" id="sample" type="button">Use sample</button> <button class="btn secondary" id="clear" type="button">Clear</button></p>
+        <p id="summary" class="muted" role="status" aria-live="polite"></p>
+        <div class="table-scroll" id="out" hidden>
+          <table>
+            <thead><tr><th scope="col">Name</th><th scope="col">Hidden by</th><th scope="col">Shown in Finder</th><th scope="col">Spotlight (typical)</th><th scope="col">Notes</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </MacWindow>
+    <script is:inline define:vars={{ sample }}>
+      (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var SYSTEM = { '.ds_store': 'Finder view settings', '.localized': 'Folder-name localization', '.trash': 'Your Trash', '.ssh': 'SSH keys: keep private', '.git': 'Git repository data', '.config': 'App settings', '.zshrc': 'Shell settings', '.zprofile': 'Shell settings', '.cache': 'App caches' };
+        function parse(text) {
+          var items = [];
+          text.split(/\r?\n/).forEach(function (line) {
+            line = line.trim();
+            if (!line || /^total\s+\d+/i.test(line)) return;
+            var m = line.match(/^([\-dlbcps])([rwxsStT\-]{9})([@+.]?)\s+\d+\s+\S+\s+\S+\s+(.*)$/);
+            var name, flags = '', xattr = false;
+            if (m) {
+              xattr = m[3] === '@';
+              var rest = m[4];
+              var dm = rest.match(/^(?:(\S+)\s+)?\d+\s+[A-Za-z]{3}\s+\d{1,2}\s+(?:\d{1,2}:\d{2}|\d{4})\s+(.+)$/);
+              if (!dm) return;
+              flags = (dm[1] || '').replace(/^-$/, '');
+              name = dm[2];
+              if (m[1] === 'l') name = name.split(' -> ')[0];
+            } else { name = line; }
+            if (name === '.' || name === '..') return;
+            items.push({ name: name, flags: flags.split(',').filter(Boolean), xattr: xattr, dir: m ? m[1] === 'd' : false });
+          });
+          return items;
+        }
+        function classify(it) {
+          var dot = it.name.charAt(0) === '.';
+          var flagHidden = it.flags.indexOf('hidden') > -1;
+          var by = []; if (dot) by.push('Dot prefix'); if (flagHidden) by.push('hidden flag');
+          var notes = [];
+          if (dot && SYSTEM[it.name.toLowerCase()]) notes.push(SYSTEM[it.name.toLowerCase()]);
+          if (it.flags.indexOf('uchg') > -1 || it.flags.indexOf('uimmutable') > -1) notes.push('Locked (cannot be edited or deleted)');
+          if (it.xattr) notes.push('Has extended attributes');
+          if (!by.length && !notes.length) notes.push('Visible');
+          return { by: by.join(' + ') || 'Not hidden', finder: by.length ? 'No (⌘⇧. reveals it)' : 'Yes', spot: by.length ? (dot ? 'Usually excluded' : 'Varies; test it') : 'Included', notes: notes.join('; '), hidden: !!by.length };
+        }
+        function td(tr, text) { var c = document.createElement('td'); c.textContent = text; tr.appendChild(c); }
+        function run() {
+          var items = parse($('listing').value);
+          var body = $('rows'); body.textContent = '';
+          var hidden = 0;
+          items.forEach(function (it) {
+            var c = classify(it); if (c.hidden) hidden++;
+            var tr = document.createElement('tr');
+            var th = document.createElement('th'); th.scope = 'row'; th.textContent = it.name + (it.dir ? '/' : ''); tr.appendChild(th);
+            td(tr, c.by); td(tr, c.finder); td(tr, c.spot); td(tr, c.notes);
+            body.appendChild(tr);
+          });
+          $('out').hidden = !items.length;
+          $('summary').textContent = items.length ? items.length + ' items checked; ' + hidden + ' hidden. Hidden items are not encrypted.' : 'Nothing recognised. Paste the output of ls -laO.';
+          if (window.track) window.track('tool_use', { tool: 'hidden-file-checker' });
+        }
+        $('run').addEventListener('click', run);
+        $('sample').addEventListener('click', function () { $('listing').value = sample; run(); });
+        $('clear').addEventListener('click', function () { $('listing').value = ''; $('rows').textContent = ''; $('out').hidden = true; $('summary').textContent = ''; });
+      })();
+    </script>
+
+    <div class="prose">
+      <h2>What the results mean</h2>
+      <ul>
+        <li><strong>Dot prefix:</strong> names starting with <code>.</code> are hidden in Finder. Terminal's <code>ls -a</code> shows them.</li>
+        <li><strong>Hidden flag:</strong> set with <code>chflags hidden</code>. Same effect in Finder, shown in <code>ls -lO</code>.</li>
+        <li><strong>Locked (<code>uchg</code>):</strong> blocks edits and deletion. It does not hide or encrypt.</li>
+      </ul>
+      <p>Hiding isn't protection. To protect contents, see <a href="/guides/password-protect-folder-on-mac/">how to password-protect a folder</a> or <a href="/guides/hide-files-on-mac/">the hide-files guide</a>.</p>
+    </div>
+    <FAQ faq={faq} />
+    <EmailCapture source="tool-hidden-file-checker" />
+  </div>
+</Base>
+<style>
+  .tool { padding: 1.2rem; }
+  textarea { width: 100%; font: 0.85rem/1.5 var(--font-mono); padding: 0.7rem; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--bg); color: var(--text); margin: 0.4rem 0; resize: vertical; }
+  .row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0; }
+</style>

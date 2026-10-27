@@ -1,0 +1,12 @@
+---
+interface Props { title?: string; class?: string }
+const { title = '', class: cls = '' } = Astro.props;
+---
+<div class={`window ${cls}`}>
+  <div class="titlebar">
+    <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="t">{title}</div>
+    <div></div>
+  </div>
+  <slot />
+</div>

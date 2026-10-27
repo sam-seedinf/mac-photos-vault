@@ -1,0 +1,42 @@
+---
+kind: guide
+title: "How to Lock a Folder on Mac"
+description: "What Finder's Locked checkbox really does, how to restrict access with permissions, and how to truly lock a folder with an encrypted disk image."
+keyword: lock folder mac
+category: Encrypt & lock
+published: 2026-10-27
+updated: 2026-10-27
+answer: "Finder's Locked checkbox (Get Info, ⌘I) only stops files being edited, renamed or deleted; anyone can still open them. To genuinely lock a folder so that nobody can read it without a password, put it in an encrypted disk image made with Disk Utility and eject the image when you're done."
+methods:
+  head: ["Method", "Stops editing", "Stops reading", "Needs a password", "Use it for"]
+  rows:
+    - ["Finder \"Locked\" checkbox", "✓", "✗", "✗", "Protecting finished files from accidents"]
+    - ["Permissions (No Access)", "✓", "✓ for other standard users", "✗", "Shared Macs with several accounts"]
+    - ["Encrypted disk image", "✓ when ejected", "✓ when ejected", "✓", "Privacy from anyone with access to the Mac"]
+steps:
+  - title: "Lock against accidental changes"
+    body: "Select the folder or file in Finder, press ⌘I to open Get Info, and tick Locked in the General section. You can't rename, move to Trash or modify it until you untick the box."
+    keys: ["⌘", "I"]
+  - title: "Restrict who can open it"
+    body: "In Get Info, open Sharing & Permissions, unlock the section with your password, and set other users or Everyone to No Access. Administrators on the Mac can still change this."
+  - title: "Lock it with a password"
+    body: "Create an encrypted image from the folder: Disk Utility > File > New Image > Image from Folder, with Encryption set to AES. Our guide to password-protecting a folder walks through each field."
+related: [guides/password-protect-folder-on-mac, guides/hidden-folder-on-mac, guides/encrypt-files-on-mac]
+best: best/file-encryption-apps-for-mac
+faq:
+  - q: "Does the Locked checkbox make a folder private?"
+    a: "No. It sets a flag that blocks changes and deletion. Anyone can still open and copy what's inside."
+  - q: "Can an administrator override folder permissions?"
+    a: "Yes. An administrator can change permissions or use sudo in Terminal, so permissions alone don't protect against another admin account."
+  - q: "What's the safest way to lock a folder on a shared Mac?"
+    a: "Use an encrypted disk image with a strong password and keep it ejected whenever you're not using it."
+external:
+  - label: "Apple Support: Mac User Guide"
+    url: "https://support.apple.com/guide/mac-help/welcome/mac"
+---
+
+## Limits and risks
+
+- The Locked flag protects against clumsy deletion, not against curious people.
+- Permission changes can be reversed by an administrator, and they don't encrypt anything.
+- If FileVault is off, someone with the disk can read files without logging in at all, whatever you set on the folder.

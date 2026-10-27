@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import VaultMockup from './VaultMockup.astro';
+import FakeDoorButton from './FakeDoorButton.astro';
+import EmailCapture from './EmailCapture.astro';
+import { allPages, urlOf, langOf, alternatesFor } from '../lib/content';
+import { reviewedLangs, ui, type Lang } from '../lib/i18n';
+import { homeSchema } from '../lib/schema';
+interface Props { lang: Exclude<Lang, 'en'>; title: string; description: string; hero: string; lead: string; waitlist: string }
+const { lang, title, description, hero, lead, waitlist } = Astro.props;
+const all = (await allPages()).filter((p) => langOf(p) === lang);
+const t = ui[lang];
+const alternates: Record<string, string> = reviewedLangs[lang] ? { en: '/', ja: '/ja/', de: '/de/', 'x-default': '/' } : {};
+---
+<Base title={title} description={description} path={`/${lang}/`} lang={lang} alternates={alternates} jsonLd={homeSchema()} brandSuffix={false}>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>{hero}</h1>
+        <p class="lead">{lead}</p>
+        <p><FakeDoorButton lang={lang} /></p>
+        <p class="muted small">{waitlist}</p>
+      </div>
+      <VaultMockup />
+    </section>
+    <section id="guides">
+      <h2>{t.nav.guides}</h2>
+      <div class="grid">
+        {all.map((p) => <a class="card" href={urlOf(p)}><h3>{p.data.h1 ?? p.data.title}</h3><p>{p.data.description}</p></a>)}
+      </div>
+    </section>
+    <EmailCapture lang={lang} source={`home-${lang}`} />
+  </div>
+</Base>
+<style>
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem; align-items: center; padding: 3rem 0 2rem; }
+  .lead { font-size: 1.1rem; color: var(--text-2); }
+  .small { font-size: 0.85rem; }
+  @media (max-width: 820px) { .hero { grid-template-columns: 1fr; padding-top: 1.5rem; } }
+</style>

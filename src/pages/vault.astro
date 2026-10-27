@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import VaultMockup from '../components/VaultMockup.astro';
+import FakeDoorButton from '../components/FakeDoorButton.astro';
+import EmailCapture from '../components/EmailCapture.astro';
+import FAQ from '../components/FAQ.astro';
+import CompareTable from '../components/CompareTable.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { breadcrumbSchema, faqSchema } from '../lib/schema';
+import { SITE } from '../lib/site';
+
+const faq = [
+  { q: 'Is Secure Vault available to download?', a: 'Not yet. It is in private beta. Join the waitlist and we will email you the download link when the beta opens.' },
+  { q: 'How is my data encrypted?', a: 'The design uses AES-256. The encryption key is generated on your Mac and stays there; nothing is sent to our servers. This describes the planned behavior of the beta.' },
+  { q: 'Can I unlock it with Touch ID?', a: 'Yes, that is part of the design. You will also have a password for Macs without Touch ID.' },
+  { q: 'What happens if I forget my password?', a: 'Because the key stays on your Mac and we never hold it, we cannot recover your files. Expect a recovery-key option so you can keep a safe copy yourself.' },
+  { q: 'How much will it cost?', a: 'We are planning a one-time lifetime purchase rather than a subscription, and the beta will be free. Final pricing will be announced before launch.' },
+  { q: 'Is the code open?', a: 'We are deciding between an open licence for the core and a closed app. We will publish the encryption design on GitHub either way.' },
+];
+const crumbs = [{ name: 'Home', url: '/' }, { name: 'Secure Vault for Mac', url: '/vault/' }];
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Secure Vault for Mac',
+  operatingSystem: 'macOS',
+  applicationCategory: 'UtilitiesApplication',
+  description: 'Encrypted vault for photos and files on Mac. Currently in private beta.',
+  url: `${SITE}/vault/`,
+};
+---
+<Base
+  title="Secure Vault for Mac: Lock Photos & Files (Beta)"
+  description="Secure Vault for Mac keeps photos and files encrypted with AES-256 and unlocks with Touch ID. Join the private beta waitlist."
+  path="/vault/"
+  alternates={{ en: '/vault/', 'x-default': '/vault/' }}
+  jsonLd={[app, breadcrumbSchema(crumbs), faqSchema(faq)].filter(Boolean)}
+  brandSuffix={false}
+>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Private beta</p>
+        <h1>Secure Vault for Mac</h1>
+        <p class="lead">A vault for the photos and files you don't want sitting in plain folders. Drag them in, they're encrypted, and Touch ID opens them again.</p>
+        <p><FakeDoorButton /></p>
+        <p class="muted small">Planned features below describe the beta. Nothing is released yet.</p>
+      </div>
+      <VaultMockup />
+    </section>
+
+    <div class="prose">
+      <h2>What it does</h2>
+      <ul>
+        <li><strong>Encrypts what you drop in.</strong> Photos, PDFs, documents, anything.</li>
+        <li><strong>Unlocks with Touch ID</strong>, with a password fallback.</li>
+        <li><strong>Drag and drop.</strong> No disk images to mount or eject.</li>
+        <li><strong>Locks itself</strong> when you close the window or the Mac sleeps.</li>
+      </ul>
+
+      <h2>How the encryption works</h2>
+      <p>Files are encrypted with AES-256. The key is created on your Mac and protected by your password and Touch ID; it never leaves the device, and we never see it. That means we can't unlock your vault for you if you lose access, so the app will offer a recovery key that you store yourself.</p>
+      <p>We plan to publish the full design in a public GitHub repository, so security-minded readers can check our claims before trusting them.</p>
+
+      <h2>How it compares with what macOS already has</h2>
+    </div>
+    <CompareTable
+      caption="Secure Vault compared with built-in tools"
+      head={['Feature', 'Photos Hidden album', 'Encrypted disk image', 'Secure Vault (planned)']}
+      rows={[
+        ['Encrypted on disk', '✗', '✓', '✓'],
+        ['Touch ID unlock', '✓', '✗', '✓'],
+        ['Any file type', '✗', '✓', '✓'],
+        ['No mounting or ejecting', '✓', '✗', '✓'],
+        ['Available today', '✓', '✓', '✗'],
+      ]}
+    />
+    <p class="prose">Honest take: the built-in tools are free and good for many people. See <a href="/compare/built-in-vs-vault-app/">built-in tools vs a vault app</a> to decide, or the <a href="/best/photo-vault-apps-for-mac/">list of photo vault apps for Mac</a>.</p>
+
+    <div class="prose">
+      <h2>Planned pricing</h2>
+      <p>Free during the beta, then a one-time lifetime purchase, with no subscription. Final price to be announced before launch.</p>
+    </div>
+
+    <FAQ faq={faq} />
+    <EmailCapture source="vault" />
+  </div>
+</Base>
+<style>
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem; align-items: center; padding: 1rem 0 2rem; }
+  .lead { font-size: 1.12rem; color: var(--text-2); }
+  .small { font-size: 0.85rem; }
+  @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } }
+</style>

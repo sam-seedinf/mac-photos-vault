@@ -1,0 +1,202 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import MacWindow from '../components/MacWindow.astro';
+import Steps from '../components/Steps.astro';
+import Kbd from '../components/Kbd.astro';
+import Callout from '../components/Callout.astro';
+import CompareTable from '../components/CompareTable.astro';
+import AppCard from '../components/AppCard.astro';
+import FAQ from '../components/FAQ.astro';
+import FakeDoorButton from '../components/FakeDoorButton.astro';
+import EmailCapture from '../components/EmailCapture.astro';
+import LastUpdated from '../components/LastUpdated.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { allPages, ogFor, urlOf, langOf, pathOf, isReviewed, alternatesFor, translationsFor, resolve, homeUrl, type Page } from '../lib/content';
+import { ui } from '../lib/i18n';
+import { pageSchemas } from '../lib/schema';
+import { fmtDate } from '../lib/site';
+import { inline } from '../lib/inline';
+
+export async function getStaticPaths() {
+  const all = await allPages();
+  return all.map((entry) => ({ params: { slug: urlOf(entry).replace(/^\/|\/$/g, '') }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: Page };
+const all = await allPages();
+const d = entry.data;
+const lang = langOf(entry);
+const t = ui[lang];
+const { Content, headings } = await render(entry);
+const url = urlOf(entry);
+
+const parent = d.kind === 'guide' ? { name: t.nav.guides, url: lang === 'en' ? '/guides/' : homeUrl(lang) }
+  : d.kind === 'best' ? { name: t.nav.best, url: lang === 'en' ? '/best/' : homeUrl(lang) } : null;
+const crumbs = [
+  { name: t.breadcrumbHome, url: homeUrl(lang) },
+  ...(parent ? [parent] : []),
+  { name: d.h1 ?? d.title, url },
+];
+
+const related = d.related.map((g) => resolve(all, g, lang)).filter((p): p is Page => !!p);
+const bestPage = d.best ? (resolve(all, d.best, lang) ?? resolve(all, d.best, 'en')) : undefined;
+const showVaultCta = d.kind !== 'best';
+
+const toc: { id: string; label: string }[] = [{ id: 'answer', label: t.quickAnswer }];
+if (d.methods) toc.push({ id: 'methods', label: t.methods });
+const bodyFirst = d.kind === 'best';
+const bodyToc = headings.filter((h) => h.depth === 2).map((h) => ({ id: h.slug, label: h.text }));
+if (bodyFirst) toc.push(...bodyToc);
+if (d.items) toc.push({ id: 'list', label: lang === 'en' ? 'The list' : lang === 'ja' ? '一覧' : 'Die Liste' });
+if (d.steps) toc.push({ id: 'steps', label: t.steps });
+if (!bodyFirst) toc.push(...bodyToc);
+if (showVaultCta) toc.push({ id: 'vault', label: t.vaultHeading });
+if (d.faq.length) toc.push({ id: 'faq', label: t.faq });
+if (related.length || bestPage) toc.push({ id: 'related', label: t.related });
+
+const alternates = isReviewed(entry) ? alternatesFor(entry, all) : {};
+const itemRows = d.items?.map((i) => [
+  i.ours ? `**${i.name}** (${t.ours})` : i.name,
+  i.price,
+  i.platforms,
+  i.openSource === null ? '–' : i.openSource ? '✓' : '✗',
+  i.bestFor,
+]);
+const ogPath = ogFor(entry);
+---
+<Base
+  title={d.title}
+  description={d.description}
+  path={url}
+  lang={lang}
+  alternates={alternates}
+  switchTargets={translationsFor(entry, all)}
+  noindex={!isReviewed(entry)}
+  og={ogPath}
+  type="article"
+  jsonLd={pageSchemas(entry, crumbs, lang)}
+>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <MacWindow title={d.title}>
+      <div class="layout">
+        <aside class="toc" aria-label={t.contents}>
+          <details class="toc-m"><summary>{t.contents}</summary>
+            <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
+          </details>
+          <nav class="toc-d" aria-label={t.contents}>
+            <p class="eyebrow">{t.contents}</p>
+            <ul>{toc.map((i) => <li><a href={`#${i.id}`} data-toc>{i.label}</a></li>)}</ul>
+          </nav>
+        </aside>
+        <article class="article" data-pagefind-body>
+          <h1>{d.h1 ?? d.title}</h1>
+          <LastUpdated date={d.updated} lang={lang} testedOn={d.testedOn} />
+
+          <section id="answer" class="answer" aria-label={t.quickAnswer}>
+            <p set:html={inline(d.answer)} />
+          </section>
+
+          {d.methods && (
+            <section id="methods">
+              <h2>{t.methods}</h2>
+              <CompareTable head={d.methods.head} rows={d.methods.rows} caption={t.methods} />
+            </section>
+          )}
+
+          {bodyFirst && <div class="body"><Content components={{ Callout, Kbd, CompareTable }} /></div>}
+
+          {d.items && (
+            <section id="list">
+              <h2>{lang === 'en' ? 'The list' : lang === 'ja' ? '一覧' : 'Die Liste'}</h2>
+              <CompareTable
+                head={lang === 'ja' ? ['アプリ', '価格', '対応', 'オープンソース', '向いている人'] : lang === 'de' ? ['App', 'Preis', 'Plattform', 'Open Source', 'Geeignet für'] : ['App', 'Price', 'Platforms', 'Open source', 'Best for']}
+                rows={itemRows!}
+                caption="App comparison"
+              />
+              <p class="muted small">
+                {d.lastChecked
+                  ? `Prices and features last checked ${fmtDate(d.lastChecked, lang)}.`
+                  : 'Prices change often; confirm on each vendor’s site before buying.'}
+                {' '}{lang === 'en' ? 'Our own app is labelled.' : ''}
+              </p>
+              {d.items.map((it, i) => <AppCard item={it} lang={lang} rank={i + 1} />)}
+            </section>
+          )}
+
+          {d.steps && (
+            <section id="steps">
+              <h2>{t.steps}</h2>
+              <Steps steps={d.steps} />
+            </section>
+          )}
+
+          {!bodyFirst && <div class="body"><Content components={{ Callout, Kbd, CompareTable }} /></div>}
+
+          {showVaultCta && (
+            <section id="vault" class="vault-cta">
+              <h2>{t.vaultHeading}</h2>
+              <p>{t.vaultBody}</p>
+              <p class="actions"><a class="btn secondary" href="/vault/">{t.vaultCta}</a> <FakeDoorButton lang={lang} /></p>
+            </section>
+          )}
+
+          <FAQ faq={d.faq} lang={lang} />
+
+          {(related.length > 0 || bestPage) && (
+            <section id="related">
+              <h2>{t.related}</h2>
+              <div class="grid">
+                {bestPage && <a class="card" href={urlOf(bestPage)}><h3>{bestPage.data.h1 ?? bestPage.data.title}</h3><p>{bestPage.data.description}</p></a>}
+                {related.map((r) => <a class="card" href={urlOf(r)}><h3>{r.data.h1 ?? r.data.title}</h3><p>{r.data.description}</p></a>)}
+              </div>
+            </section>
+          )}
+
+          {d.external.length > 0 && (
+            <section class="sources">
+              <h2>{lang === 'en' ? 'Sources' : lang === 'ja' ? '参考' : 'Quellen'}</h2>
+              <ul>{d.external.map((e) => <li><a href={e.url} rel="noopener" target="_blank">{e.label}</a></li>)}</ul>
+            </section>
+          )}
+
+          {d.kind === 'best' && <EmailCapture lang={lang} source={pathOf(entry)} />}
+
+          <p class="byline muted small">
+            {lang === 'en' ? 'Written by' : lang === 'ja' ? '執筆' : 'Von'} <a href="/about/">Sumeet</a> · <a href="/about/#how-we-test">{lang === 'en' ? 'How we test' : lang === 'ja' ? 'テスト方法' : 'So testen wir'}</a>
+          </p>
+        </article>
+      </div>
+    </MacWindow>
+  </div>
+</Base>
+<style>
+  .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); }
+  .toc { background: var(--sidebar); border-right: 1px solid var(--line); padding: 1.2rem 1rem; }
+  .toc-d { position: sticky; top: 76px; }
+  .toc ul { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
+  .toc li { margin-bottom: 0.15rem; }
+  .toc a { display: block; padding: 0.3rem 0.5rem; border-radius: 6px; color: var(--text); text-decoration: none; }
+  .toc a:hover { background: var(--code-bg); color: var(--link); }
+  .toc-m { display: none; }
+  .article { padding: 1.8rem clamp(1rem, 4vw, 2.6rem) 2rem; min-width: 0; }
+  .article > :global(*), .body { max-width: 74ch; }
+  .article :global(section[id]) { scroll-margin-top: 76px; }
+  .answer { font-size: 1.12rem; background: var(--code-bg); border-radius: var(--radius-window); padding: 1rem 1.2rem; margin: 0 0 1.5rem; border-left: 4px solid var(--accent); }
+  .answer p { margin: 0; }
+  .small { font-size: 0.85rem; }
+  .vault-cta { margin-top: 2.5rem; padding: 1.3rem 1.5rem; border-radius: var(--radius-window); border: 1px solid var(--line); background: var(--sidebar); }
+  .vault-cta h2 { margin-top: 0; font-size: 1.25rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0; }
+  .byline { margin-top: 2.5rem; }
+  .body :global(h2) { scroll-margin-top: 76px; }
+  .article :global(.table-scroll) { max-width: none; }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { border-right: 0; border-bottom: 1px solid var(--line); padding: 0.6rem 1rem; }
+    .toc-d { display: none; }
+    .toc-m { display: block; }
+    .toc-m summary { cursor: pointer; font-weight: 600; padding: 0.3rem 0; }
+  }
+</style>

@@ -1,0 +1,8 @@
+---
+import { fmtDate, isoDate } from '../lib/site';
+import { ui, type Lang } from '../lib/i18n';
+interface Props { date: Date; lang?: Lang; testedOn?: string }
+const { date, lang = 'en', testedOn } = Astro.props;
+---
+<p class="lu">{ui[lang].updated}: <time datetime={isoDate(date)}>{fmtDate(date, lang)}</time>{testedOn && <> · {ui[lang].testedOn} {testedOn}</>}</p>
+<style>.lu { font-size: 0.85rem; color: var(--text-2); margin: 0.2rem 0 1rem; }</style>

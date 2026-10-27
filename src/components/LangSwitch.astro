@@ -1,0 +1,10 @@
+---
+import { langs, langNames, type Lang } from '../lib/i18n';
+interface Props { current: Lang; targets: Partial<Record<Lang, string>> }
+const { current, targets } = Astro.props;
+---
+<nav class="langs" aria-label="Language">
+  {langs.map((l) => (targets[l]
+    ? (l === current ? <span aria-current="true" lang={l}>{langNames[l]}</span> : <a href={targets[l]} hreflang={l} lang={l}>{langNames[l]}</a>)
+    : null))}
+</nav>

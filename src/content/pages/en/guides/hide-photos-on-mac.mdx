@@ -1,0 +1,47 @@
+---
+kind: guide
+title: "How to Hide Photos on Mac (and Lock the Hidden Album)"
+description: "Hide photos in the Photos app on Mac, find and lock the Hidden album, understand iCloud sync, and know where Apple's hiding stops."
+keyword: hide photos on mac
+category: Photos
+published: 2026-10-27
+updated: 2026-10-27
+answer: "In Photos, select the picture, then choose Image > Hide Photo (⌘L). It moves to the Hidden album. On macOS Ventura and later that album is locked by default and opens with Touch ID or your login password. Hiding removes photos from your main library views but does not encrypt them."
+methods:
+  head: ["Approach", "Where photos go", "Lock", "Syncs with iCloud Photos"]
+  rows:
+    - ["Hide Photo in Photos", "Hidden album", "Touch ID or password (Ventura and later)", "✓"]
+    - ["Move files into an encrypted disk image", "A separate image you mount", "Password", "✗ unless you sync the image"]
+    - ["Vault app", "Inside the app", "Touch ID or password", "Depends on the app"]
+steps:
+  - title: "Hide the photo"
+    body: "Open Photos, select one or more photos, then choose Image > Hide Photo or press the shortcut. Confirm when asked."
+    keys: ["⌘", "L"]
+  - title: "Open the Hidden album"
+    body: "The Hidden album appears in the Photos sidebar (under Utilities in newer versions). If you don't see it, choose View > Show Hidden Photo Album. Authenticate with Touch ID or your password."
+  - title: "Unhide when you want them back"
+    body: "In the Hidden album, select the photo and choose Image > Unhide Photo."
+  - title: "Check that the album is locked"
+    body: "On macOS Ventura and later, the Hidden and Recently Deleted albums require Touch ID or your login password. On older versions the Hidden album is simply not displayed unless you turn it on, with no lock."
+related: [guides/hide-files-on-mac, guides/encrypt-files-on-mac, guides/password-protect-folder-on-mac]
+best: best/photo-vault-apps-for-mac
+faq:
+  - q: "Do hidden photos sync to my iPhone?"
+    a: "If iCloud Photos is on, the hidden state syncs across your devices signed in to the same Apple Account, so they also sit in the Hidden album on iPhone and iPad."
+  - q: "Are hidden photos encrypted?"
+    a: "The Hidden album is access-controlled inside the Photos app. Your photo library on disk is protected only by FileVault, if you've turned it on."
+  - q: "Where are hidden photos stored on my Mac?"
+    a: "They stay inside your Photos library package like every other photo. The library file is visible in Finder; hiding changes how Photos displays an image, not where it is stored."
+  - q: "Can other apps see hidden photos?"
+    a: "Apps that read the Photos library should respect the Hidden album, but that depends on each app. If a photo is truly sensitive, keep it out of Photos entirely."
+external:
+  - label: "Apple Support: Photos User Guide"
+    url: "https://support.apple.com/guide/photos/welcome/mac"
+---
+
+## Limits and risks
+
+- **Not separate encryption.** Locking the Hidden album stops someone who opens Photos on your unlocked Mac from browsing it. It does not change how the photos are stored.
+- **Sync spreads the photos.** With iCloud Photos on, hidden images exist on every signed-in device and in iCloud. Anyone with your Apple Account credentials can reach them.
+- **Exports and shares leak.** A hidden photo you send, AirDrop or export is a normal file afterwards.
+- **FileVault matters.** Without FileVault, someone with physical access to the disk can read the library without logging in.

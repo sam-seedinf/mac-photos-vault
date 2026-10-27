@@ -1,0 +1,79 @@
+---
+kind: best
+title: "Best File Encryption Apps for Mac"
+description: "Compare FileVault, Disk Utility images, Cryptomator, VeraCrypt, age and Secure Vault for Mac for encrypting files on a Mac."
+keyword: file encryption app mac
+category: Encrypt & lock
+published: 2026-10-27
+updated: 2026-10-27
+answer: "Turn on FileVault first; it's free and protects the whole disk. Then add per-folder encryption: Disk Utility images need no extra software, Cryptomator suits cloud storage, VeraCrypt suits cross-platform containers, and age suits command-line users. Secure Vault for Mac, ours, is still in beta."
+items:
+  - name: "FileVault"
+    tagline: "Full-disk encryption built into macOS."
+    price: "Free, included with macOS"
+    platforms: "Mac"
+    openSource: false
+    bestFor: "Everyone; the baseline"
+    pros: ["Protects everything on the startup disk", "No ongoing effort once enabled"]
+    cons: ["Doesn't protect files while you're logged in", "Doesn't help for files you send or sync elsewhere"]
+  - name: "Encrypted disk image (Disk Utility)"
+    tagline: "Password-protected images in AES-128 or AES-256."
+    price: "Free, included with macOS"
+    platforms: "Mac"
+    openSource: false
+    bestFor: "A few sensitive folders"
+    pros: ["Built in, nothing to install", "Sparse bundles sync well with cloud drives"]
+    cons: ["Mounting by hand", "No password recovery"]
+  - name: "Cryptomator"
+    tagline: "Open-source client-side encryption for cloud files."
+    price: "Free on desktop; mobile apps are paid"
+    platforms: "Mac, Windows, Linux, iOS, Android"
+    openSource: true
+    url: "https://cryptomator.org/"
+    bestFor: "Encrypting what you keep in cloud storage"
+    pros: ["Open source, encrypts file by file", "Works with any cloud folder"]
+    cons: ["Needs a helper to mount the vault on Mac", "Less suited to one-off encrypted files"]
+  - name: "VeraCrypt"
+    tagline: "Open-source encrypted containers and volumes."
+    price: "Free"
+    platforms: "Mac, Windows, Linux"
+    openSource: true
+    url: "https://www.veracrypt.fr/"
+    bestFor: "Cross-platform containers and hidden volumes"
+    pros: ["Mature and audited", "Plausible-deniability hidden volumes"]
+    cons: ["Needs macFUSE on Mac", "Dated interface"]
+  - name: "age"
+    tagline: "A small, simple command-line tool for encrypting files."
+    price: "Free"
+    platforms: "Mac, Windows, Linux"
+    openSource: true
+    url: "https://github.com/FiloSottile/age"
+    bestFor: "Developers and scripted workflows"
+    pros: ["Simple, modern design", "One file in, one file out"]
+    cons: ["Command line only", "Not a vault: you manage plain files yourself"]
+  - name: "Secure Vault for Mac"
+    tagline: "Our encrypted vault for photos and files, in private beta."
+    price: "Free during beta; planned one-time purchase"
+    platforms: "macOS (planned)"
+    openSource: null
+    url: "https://securemacapp.com/vault/"
+    ours: true
+    bestFor: "Files you open often, unlocked with Touch ID"
+    pros: ["Planned AES-256 with keys kept on your Mac", "Drag and drop, no manual mounting"]
+    cons: ["Not released yet", "No independent audit yet"]
+related: [guides/encrypt-files-on-mac, guides/password-protect-folder-on-mac, compare/built-in-vs-vault-app]
+faq:
+  - q: "What's the best way to encrypt files on a Mac?"
+    a: "Use FileVault for the whole disk, and an encrypted disk image, Cryptomator or a vault app for sensitive folders you want protected even while you're logged in."
+  - q: "Is FileVault enough?"
+    a: "It protects a Mac that's off or logged out, such as one that's lost or stolen. It doesn't protect files from someone using your logged-in session or from files you share."
+  - q: "Do I need a third-party app at all?"
+    a: "Not necessarily. FileVault and Disk Utility cover many needs. Third-party tools help with cloud sync, cross-platform use, or convenience."
+external:
+  - label: "Apple Support: Protect data on your Mac with FileVault"
+    url: "https://support.apple.com/guide/mac-help/protect-data-on-your-mac-with-filevault-mh11785/mac"
+---
+
+## How we compared them
+
+We looked at what each tool encrypts (a disk, a container, or individual files), whether it's open source, how much manual work it needs, and whether it protects files while you're logged in. Prices change often, so confirm on each vendor's site.

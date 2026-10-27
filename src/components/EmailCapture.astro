@@ -1,0 +1,20 @@
+---
+import SubscribeForm from './SubscribeForm.astro';
+import { ui, type Lang } from '../lib/i18n';
+interface Props { lang?: Lang; source?: string; heading?: string; text?: string }
+const { lang = 'en', source = '', heading, text } = Astro.props;
+const defaults = {
+  en: ['Secure Vault for Mac is in private beta', 'Get the download link by email when it opens.'],
+  ja: ['Secure Vault for Mac は非公開ベータ中です', 'ベータ公開時にダウンロードリンクをメールでお送りします。'],
+  de: ['Secure Vault for Mac ist in der privaten Beta', 'Sie erhalten den Download-Link per E-Mail, sobald die Beta startet.'],
+}[lang];
+---
+<section class="capture" aria-labelledby={`cap-${source}`}>
+  <h2 id={`cap-${source}`}>{heading ?? defaults[0]}</h2>
+  <p>{text ?? defaults[1]}</p>
+  <SubscribeForm lang={lang} source={source} compact />
+</section>
+<style>
+  .capture { margin: 2.5rem 0 0; padding: 1.4rem 1.5rem; background: var(--code-bg); border-radius: var(--radius-window); border: 1px solid var(--line); }
+  .capture h2 { margin: 0 0 0.3rem; font-size: 1.2rem; }
+</style>

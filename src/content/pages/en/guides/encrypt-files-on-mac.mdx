@@ -1,0 +1,51 @@
+---
+kind: guide
+title: "How to Encrypt Files on Mac"
+description: "Compare FileVault, encrypted disk images and vault apps for encrypting files on Mac, with steps to turn on FileVault and when to use each option."
+keyword: encrypt files mac
+category: Encrypt & lock
+published: 2026-10-27
+updated: 2026-10-27
+answer: "For everything on your Mac, turn on FileVault in System Settings > Privacy & Security. For specific files you want locked even while you're logged in, use an encrypted disk image from Disk Utility or a vault app. FileVault protects a switched-off or logged-out Mac; per-file encryption protects data on a running one."
+methods:
+  head: ["Option", "What it protects", "Protected while logged in", "Cost", "Effort"]
+  rows:
+    - ["FileVault", "The whole startup disk", "✗", "Free", "One-time setup"]
+    - ["Encrypted disk image", "One folder's worth of files", "✓ while ejected", "Free", "Mount and eject each time"]
+    - ["Vault app", "Files kept inside the app", "✓ while locked", "Varies", "Unlock with Touch ID or password"]
+    - ["Encrypted archive (zip or 7z with AES)", "A fixed set of files", "✓ while archived", "Free apps exist", "Re-create after changes"]
+steps:
+  - title: "Turn on FileVault"
+    body: "Open System Settings > Privacy & Security, scroll to FileVault, click Turn On, and enter your password. On Macs with Apple silicon, the disk is already encrypted in hardware; FileVault adds protection tied to your password."
+  - title: "Choose how to recover"
+    body: "macOS offers to let your Apple Account unlock the disk or to create a recovery key. A recovery key is a long code. Store it somewhere safe, away from the Mac, because without it or your account you can't recover the data."
+  - title: "Encrypt specific folders"
+    body: "For data that needs protection even on an unlocked Mac, create an encrypted disk image with Disk Utility (our password-protect guide has the steps) or keep the files in a vault app."
+related: [guides/password-protect-folder-on-mac, guides/lock-folder-on-mac, guides/hide-files-on-mac]
+best: best/file-encryption-apps-for-mac
+faq:
+  - q: "Does FileVault slow down my Mac?"
+    a: "On modern Macs the impact is generally too small to notice, because the hardware handles encryption."
+  - q: "Is FileVault enough on its own?"
+    a: "It protects data when the Mac is off or logged out. Once someone is logged in as you, they can read your files, so sensitive folders need their own encryption."
+  - q: "Where do I find my FileVault recovery key?"
+    a: "If you chose a recovery key at setup, it's the one you saved. If you chose your Apple Account, you can reset access through your account at the login screen."
+  - q: "Can I encrypt a single file?"
+    a: "Yes. Put it in an encrypted disk image, an encrypted archive, or a vault app. Finder has no 'encrypt this file' command of its own."
+external:
+  - label: "Apple Support: Protect data on your Mac with FileVault"
+    url: "https://support.apple.com/guide/mac-help/protect-data-on-your-mac-with-filevault-mh11785/mac"
+---
+
+## Which should you use?
+
+- **Lost-laptop worry:** FileVault. Turn it on today.
+- **A few sensitive folders:** an encrypted disk image.
+- **Photos and files you open often:** a vault app, so you don't mount and eject.
+- **Sending files to someone:** an AES-encrypted archive, with the password shared separately from the file.
+
+## Limits and risks
+
+- Encryption protects data only as well as your password and your recovery key. Losing both means losing the data.
+- FileVault does nothing about malware or someone using your logged-in Mac.
+- Encrypted copies don't replace backups. Back up the files, and encrypt the backup as well.

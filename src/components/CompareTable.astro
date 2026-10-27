@@ -1,0 +1,22 @@
+---
+import { inline } from '../lib/inline';
+interface Props { head: string[]; rows: string[][]; caption?: string }
+const { head, rows, caption } = Astro.props;
+const mark = (c: string) => (c === '✓' ? ['Yes', '✓'] : c === '✗' ? ['No', '✗'] : null);
+---
+<div class="table-scroll" tabindex="0" role="region" aria-label={caption ?? 'Comparison table'}>
+  <table>
+    {caption && <caption class="sr-only">{caption}</caption>}
+    <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          {r.map((c, i) => {
+            const m = mark(c);
+            return i === 0 ? <th scope="row" set:html={inline(c)} /> : m ? <td><span aria-label={m[0]} role="img">{m[1]}</span></td> : <td set:html={inline(c)} />;
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

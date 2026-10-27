@@ -1,0 +1,22 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+import { inline } from '../lib/inline';
+interface Props { faq: { q: string; a: string }[]; lang?: Lang }
+const { faq, lang = 'en' } = Astro.props;
+---
+{faq.length > 0 && (
+  <section id="faq" class="faq">
+    <h2>{ui[lang].faq}</h2>
+    {faq.map((f) => (
+      <details>
+        <summary>{f.q}</summary>
+        <p set:html={inline(f.a)} />
+      </details>
+    ))}
+  </section>
+)}
+<style>
+  details { border-bottom: 1px solid var(--line); padding: 0.75rem 0; }
+  summary { cursor: pointer; font-weight: 600; list-style-position: outside; }
+  details p { margin: 0.6rem 0 0; color: var(--text-2); }
+</style>

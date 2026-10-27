@@ -1,0 +1,18 @@
+---
+import Base from './Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { breadcrumbSchema } from '../lib/schema';
+interface Props { title: string; description: string; path: string; h1?: string; updated?: string }
+const { title, description, path, h1 = title, updated } = Astro.props;
+const crumbs = [{ name: 'Home', url: '/' }, { name: h1, url: path }];
+---
+<Base title={title} description={description} path={path} alternates={{ en: path, 'x-default': path }} jsonLd={[breadcrumbSchema(crumbs)]}>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <div class="prose">
+      <h1>{h1}</h1>
+      {updated && <p class="muted">Last updated: {updated}</p>}
+      <slot />
+    </div>
+  </div>
+</Base>

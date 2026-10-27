@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { allPages, urlOf, langOf } from '../../lib/content';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const guides = (await allPages()).filter((p) => langOf(p) === 'en' && p.data.kind === 'guide');
+const cats = [...new Set(guides.map((g) => g.data.category ?? 'More'))];
+const crumbs = [{ name: 'Home', url: '/' }, { name: 'Guides', url: '/guides/' }];
+---
+<Base title="Mac Privacy Guides" description="Step-by-step Mac guides to hide files, lock folders, hide photos and encrypt data, with the limits of each method." path="/guides/" alternates={{ en: '/guides/', 'x-default': '/guides/' }} jsonLd={[breadcrumbSchema(crumbs)]}>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Mac Privacy Guides</h1>
+    <p class="muted prose">Real steps, honest limits. Each guide says what a method protects, what it doesn't, and when a vault app is the better tool.</p>
+    {cats.map((c) => (
+      <section>
+        <h2>{c}</h2>
+        <div class="grid">
+          {guides.filter((g) => (g.data.category ?? 'More') === c).map((g) => <a class="card" href={urlOf(g)}><h3>{g.data.h1 ?? g.data.title}</h3><p>{g.data.description}</p></a>)}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>

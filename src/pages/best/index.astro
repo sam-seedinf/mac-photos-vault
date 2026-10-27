@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { allPages, urlOf, langOf } from '../../lib/content';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const pages = (await allPages()).filter((p) => langOf(p) === 'en' && ['best', 'alternative', 'compare'].includes(p.data.kind));
+const crumbs = [{ name: 'Home', url: '/' }, { name: 'Best', url: '/best/' }];
+---
+<Base title="Best Mac Privacy & Security Apps" description="Directory of Mac privacy and security apps: photo vaults, file encryption, free open-source tools, alternatives and comparisons." path="/best/" alternates={{ en: '/best/', 'x-default': '/best/' }} jsonLd={[breadcrumbSchema(crumbs)]}>
+  <div class="wrap">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1>Best Mac Privacy & Security Apps</h1>
+    <p class="muted prose">Comparisons built on the same criteria. Apps made by us are labelled "ours". Want your app listed? <a href="/contact/">Get in touch</a>.</p>
+    <div class="grid">
+      {pages.map((g) => <a class="card" href={urlOf(g)}><h3>{g.data.h1 ?? g.data.title}</h3><p>{g.data.description}</p></a>)}
+    </div>
+  </div>
+</Base>

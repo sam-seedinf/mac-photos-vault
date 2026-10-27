@@ -1,0 +1,52 @@
+---
+kind: guide
+title: "How to Hide Files on Mac (4 Ways, 2026)"
+description: "Four built-in ways to hide files on a Mac, from a Terminal flag to an encrypted disk image, plus what each one does and doesn't protect."
+keyword: hide files mac
+category: Hide & protect
+published: 2026-10-27
+updated: 2026-10-27
+answer: "The quickest way to hide a file on a Mac is Terminal: type `chflags hidden` followed by the file's path. Finder stops showing it until you press ⌘⇧. to reveal hidden items. That hides a file from casual browsing only. To keep the contents private, put them in an encrypted disk image."
+methods:
+  head: ["Method", "Hidden in Finder", "Contents encrypted", "Easy to reverse", "Best for"]
+  rows:
+    - ["`chflags hidden` (Terminal)", "✓", "✗", "✓", "Keeping a folder out of sight"]
+    - ["Dot prefix (`.name`)", "✓", "✗", "✓", "Config-style files"]
+    - ["Encrypted disk image, then hide the image", "✓", "✓", "✓", "Anything sensitive"]
+    - ["Photos app Hidden album", "✓", "✗ (locked behind Touch ID or password)", "✓", "Photos only"]
+steps:
+  - title: "Hide a file or folder with chflags"
+    body: "Open Terminal (Applications > Utilities). Type `chflags hidden ` with a trailing space, drag the file or folder from Finder into the Terminal window to paste its path, then press Return."
+  - title: "Or give it a dot prefix"
+    body: "In Terminal, rename the item so its name starts with a dot, for example `mv ~/Documents/Taxes ~/Documents/.Taxes`. Finder treats names that start with a dot as hidden."
+  - title: "Reveal hidden items when you need them"
+    body: "In any Finder window, show or hide hidden items with this shortcut. Hidden items appear slightly dimmed. To make an item visible for good, run `chflags nohidden` on it, or remove the dot."
+    keys: ["⌘", "⇧", "."]
+  - title: "Encrypt the contents, then hide the container"
+    body: "Hiding does nothing to protect what's inside. Put the files in a password-protected disk image (see our guide on password-protecting a folder), then run `chflags hidden` on the `.dmg` file itself."
+related: [guides/hidden-folder-on-mac, guides/password-protect-folder-on-mac, guides/encrypt-files-on-mac]
+best: best/file-encryption-apps-for-mac
+faq:
+  - q: "Can someone find hidden files on my Mac?"
+    a: "Yes. Anyone using your logged-in Mac can press ⌘⇧. in Finder or an Open/Save dialog, or run `ls -a` in Terminal. Hiding stops accidental discovery, not deliberate searching."
+  - q: "Do hidden files show up in Time Machine backups?"
+    a: "Yes. Hidden files are normal files with a flag, so backups include them. If the backup disk isn't encrypted, the contents are readable from it."
+  - q: "How do I hide a file again after revealing it?"
+    a: "Press ⌘⇧. a second time to hide the hidden items again. The items stay hidden because their flag or dot prefix hasn't changed."
+  - q: "Does hiding a file encrypt it?"
+    a: "No. The `hidden` flag and the dot prefix only change how Finder lists a file. The contents stay readable by anyone who finds the file."
+external:
+  - label: "Apple Support: Mac User Guide"
+    url: "https://support.apple.com/guide/mac-help/welcome/mac"
+---
+
+## Limits and risks
+
+Every method on this page except the encrypted image is *obscurity*, not security.
+
+- **⌘⇧. reveals everything.** It works in Finder and in the Open and Save dialogs of most apps, so anyone sitting at your unlocked Mac can see hidden items in a few seconds.
+- **Terminal shows them too.** `ls -a` lists dot-prefixed items, and `ls -lO` also shows the `hidden` flag.
+- **Backups copy them.** Time Machine and cloud backup tools treat hidden files like any other file.
+- **Some apps ignore the flag.** An app's own recent-files list can still mention a hidden file by name.
+
+<Callout type="warning">If you only need to stop yourself or family members from stumbling on a folder, hiding is enough. If the files would hurt you if someone read them, use encryption.</Callout>

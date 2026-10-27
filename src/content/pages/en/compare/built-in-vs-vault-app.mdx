@@ -1,0 +1,43 @@
+---
+kind: compare
+title: "macOS Built-in Privacy vs a Vault App"
+description: "Compare the Photos Hidden album, encrypted disk images, FileVault and a vault app on security, convenience and sync, so you can pick the right tool."
+keyword: hide files mac lock folder
+category: Compare
+published: 2026-10-27
+updated: 2026-10-27
+answer: "Built-in tools are free and good enough for casual privacy: the Photos Hidden album for pictures, an encrypted disk image for folders, and FileVault for the whole Mac. A vault app is worth it when you open private files often and want encryption without mounting images by hand."
+methods:
+  head: ["Feature", "Photos Hidden album", "Encrypted disk image", "FileVault", "Vault app (Secure Vault, planned)"]
+  rows:
+    - ["Encrypts files on disk", "✗ (relies on FileVault)", "✓ AES-128 or AES-256", "✓ whole disk", "✓ planned AES-256"]
+    - ["Protects while you're logged in", "Locked album (Ventura and later)", "✓ while ejected", "✗", "✓ while locked"]
+    - ["Unlock method", "Touch ID or password", "Password", "Login password", "Touch ID or password (planned)"]
+    - ["Works for any file", "✗ photos only", "✓", "✓", "✓"]
+    - ["Syncs across devices", "✓ with iCloud Photos", "Manual", "✗", "To be decided"]
+    - ["Setup effort", "Low", "Medium", "Low", "Low"]
+    - ["Cost", "Free", "Free", "Free", "Beta free; planned one-time price"]
+related: [guides/hide-photos-on-mac, guides/password-protect-folder-on-mac, guides/encrypt-files-on-mac]
+best: best/photo-vault-apps-for-mac
+faq:
+  - q: "Is a vault app more secure than built-in tools?"
+    a: "Not automatically. An encrypted disk image uses well-tested AES encryption. A vault app is mostly more convenient, and trust depends on the developer and on whether the code is open or audited."
+  - q: "Can I use FileVault and a vault app together?"
+    a: "Yes, and it's a good idea. FileVault protects the Mac when it's off or logged out; a vault protects chosen files while you're using the Mac."
+  - q: "Is Secure Vault available now?"
+    a: "No. It's in private beta, and the features in this table are plans, marked as such."
+external:
+  - label: "Apple Support: Protect data on your Mac with FileVault"
+    url: "https://support.apple.com/guide/mac-help/protect-data-on-your-mac-with-filevault-mh11785/mac"
+---
+
+## How to choose
+
+- **Only hiding photos from family?** The Hidden album.
+- **A folder of documents you rarely open?** An encrypted disk image.
+- **Worried about theft or loss?** FileVault, always.
+- **Private files you open daily?** A vault app, so locking and unlocking stays quick.
+
+## Limits of this comparison
+
+Secure Vault is not released. We list its planned behavior so you can compare it fairly, and we'll update this page once the beta ships.

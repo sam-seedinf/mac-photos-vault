@@ -1,0 +1,6 @@
+---
+import { ui, type Lang } from '../lib/i18n';
+interface Props { app?: string; lang?: Lang; label?: string; class?: string; size?: 'sm' | 'md' }
+const { app = 'vault', lang = 'en', label, class: cls = '', size = 'md' } = Astro.props;
+---
+<button type="button" class={`btn ${size === 'sm' ? 'sm' : ''} ${cls}`} data-fakedoor data-app={app} data-lang={lang}>{label ?? ui[lang].download}</button>
